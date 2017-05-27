@@ -1,7 +1,6 @@
 package httpServer;
 
 import java.math.BigInteger;
-import java.util.Map;
 
 public class Waiter extends Thread
 {
@@ -29,9 +28,9 @@ public class Waiter extends Thread
 		}
 		finally
 		{
-			String responseJSON = "{ \"text\" : " + msg + ", \"chat_id\" : " + chatId + " }";
-			//chiama evento fineTimeout
+			String responseJSON = "{ \"text\" : \"" + msg + "\", \"chat_id\" : " + chatId+ " }";
 			String response = null;
+			
 			try
 			{
 				response = HttpClientUtil.post

@@ -2,8 +2,6 @@ package httpServer;
 
 import org.json.*;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Map;
 
 public class Server
 {
@@ -12,17 +10,17 @@ public class Server
 		String message = "ERROR", responseJSON;
 		BigInteger chatId = BigInteger.valueOf(31149648);
 		
-		
+		//QUANDO SI FERMA??
+		while(true)
+		{
 			String response = HttpClientUtil.get
 			(
 					"https://api.telegram.org/bot381629683:AAG35c3Q1TMgxJ74TofHUkpHyyiqI9Swm58/getUpdates"			
 		    );
-		
+			//QUANDO SI FERMA??
 			try
 			{
-				//retrieve Text
-				
-				
+				//response				
 				JSONObject obj = new JSONObject(response);
 				JSONArray result = obj.getJSONArray("result");
 				JSONObject message1 = result.getJSONObject(1);
@@ -30,16 +28,6 @@ public class Server
 				JSONObject chat = message2.getJSONObject("chat");
 				chatId = chat.getBigInteger("id");
 				
-				
-				
-				
-				/*
-				ArrayList<Map<String, ?>> result = (ArrayList<Map<String, ?>>) response.get("result");
-				Map<String, ?> msg = result.get(1);
-				Map<String, ?> msg2 = (Map<String, ?>) msg.get("message");
-				Map<String, ?> chat = (Map<String, ?>) msg2.get("chat");
-				chatId = (byte) chat.get("id");
-				*/
 				System.out.println(chatId);
 			}
 			catch(Exception e)
@@ -52,13 +40,12 @@ public class Server
 			//thread start
 			Thread waiter = new Waiter(10, "Timer Scaduto", chatId);
 			waiter.start();
-			message = "Timer Started";
+			message = "Timer Partito";
 		
 			System.out.println("getUpdates:\n" + response.toString());
-			responseJSON = "{ \"text\" : " + message + ", \"chat_id\" : " + chatId+ " }";
-			//responseJSON = "{ \"text\" : \"lol\", \"chat_id\" : 31149648 }";
+			responseJSON = "";
+			responseJSON = "{ \"text\" : \"" + message + "\", \"chat_id\" : " + chatId+ " }";
 			
-			//send "timer started"
 			String response2 = "";
 			try
 			{
@@ -75,5 +62,5 @@ public class Server
 				
 			System.out.println("sendOK:\n" + response2.toString());	
 		}
-	
+	}
 }
