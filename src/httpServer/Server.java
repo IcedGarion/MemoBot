@@ -1,51 +1,56 @@
 package httpServer;
 
 import org.json.*;
-import java.math.BigInteger;
 
 public class Server
 {
+	//una prima get per trovare updateId;
+	//un ciclo di post (getUpdates) con il updateId++, e solo se il JSON è pieno, fai cose
+	
+	
+	
 	public static void main(String args[])
 	{
-		String message = "ERROR", responseJSON;
-		BigInteger chatId = BigInteger.valueOf(31149648);
+		String message = "ERROR", responseJSON, updateJSON;
+		long chatId = 0, updateId = 0;
 		
 		//QUANDO SI FERMA??
 		while(true)
 		{
+			updateJSON = "";
+			//get updates
 			String response = HttpClientUtil.get
 			(
 					"https://api.telegram.org/bot381629683:AAG35c3Q1TMgxJ74TofHUkpHyyiqI9Swm58/getUpdates"			
 		    );
 			//QUANDO SI FERMA??
+			
+			//parse response
 			try
-			{
-				//response				
+			{			
 				JSONObject obj = new JSONObject(response);
 				JSONArray result = obj.getJSONArray("result");
-				JSONObject message1 = result.getJSONObject(1);
+				JSONObject message1 = result.getJSONObject(0);
+				updateId = message1.getLong("update_id");
 				JSONObject message2 = message1.getJSONObject("message");
 				JSONObject chat = message2.getJSONObject("chat");
-				chatId = chat.getBigInteger("id");
+				chatId = chat.getLong("id");
 				
-				System.out.println(chatId);
+				System.out.println("getUpdates:\n" + response.toString());
 			}
 			catch(Exception e)
 			{
 				e.printStackTrace();
-				//continue;
 			}	
 		
 
-			//thread start
-			Thread waiter = new Waiter(10, "Timer Scaduto", chatId);
+			//starts waiter thread
+			Thread waiter = new Waiter(10000, "Timer Scaduto", chatId);
 			waiter.start();
+
+			//writes message ok
 			message = "Timer Partito";
-		
-			System.out.println("getUpdates:\n" + response.toString());
-			responseJSON = "";
 			responseJSON = "{ \"text\" : \"" + message + "\", \"chat_id\" : " + chatId+ " }";
-			
 			String response2 = "";
 			try
 			{

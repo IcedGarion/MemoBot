@@ -1,14 +1,12 @@
 package httpServer;
 
-import java.math.BigInteger;
-
 public class Waiter extends Thread
 {
 	private int millisecs;
 	private String msg;
-	private BigInteger chatId;
+	private long chatId;
 	
-	public Waiter(int millisecs, String message, BigInteger chatId)
+	public Waiter(int millisecs, String message, long chatId)
 	{
 		this.millisecs = millisecs;
 		this.msg = message;
@@ -20,6 +18,7 @@ public class Waiter extends Thread
 	{
 		try
 		{
+			//waits
 			sleep(millisecs);
 		}
 		catch(Exception e)
@@ -28,6 +27,7 @@ public class Waiter extends Thread
 		}
 		finally
 		{
+			//writes message
 			String responseJSON = "{ \"text\" : \"" + msg + "\", \"chat_id\" : " + chatId+ " }";
 			String response = null;
 			
