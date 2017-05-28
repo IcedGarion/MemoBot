@@ -14,13 +14,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class HttpClientUtil
 {
-    /**
-     * Perform a GET request towards a server
-     *
-     * @param URL the @link{URL} to call
-     * @return the response, parsed from JSON
-     * @throws HueException 
-     */
+	//HTTP GET
     public static String get(String URL) 
     {
         // init
@@ -44,13 +38,7 @@ public class HttpClientUtil
         return json;
     }
 
-    /**
-     * Perform a POST request towards a server
-     *
-     * @param URL         the @link{URL} to call
-     * @param contentBody the content body of the request
-     * @param contentType the content type of the request
-     */
+    //HTTP POST
  	public static String post(String url, String json) throws Exception
  	{
  		URL obj = new URL(url);

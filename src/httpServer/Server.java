@@ -7,6 +7,13 @@ public class Server
 	private static long chatId = 0;
 	private static long updateId = 0;
 	private static String responseJSON = "", response = "";
+	private final static int UPDATE_FREQUENCY = 1000;
+	
+	private static final String COMMANDS_MESSAGE = "Uso:\n'/timer <x_secondi> <messaggio>' : aspetta per x_secondi e scrive il messaggio\n" 
+			+ "'/help' : scrive questo messaggio";
+	//private static final String HELLO_MESSAGE = "Ciao! Questo è un Bot semplice per ricordare appuntamenti.\n" + COMMANDS_MESSAGE;
+	private static final String ERROR_MESSAGE = "Comando non riconosicuto.\n" + COMMANDS_MESSAGE;
+	
 	
 	public static void main(String args[]) throws InterruptedException
 	{
@@ -24,29 +31,32 @@ public class Server
 	
 	private static void mainLoop() throws InterruptedException
 	{
+		String updateText;
+		String response;
+		
 		//waits for an update
-		firstUpdate();
+		updateText = firstUpdate();
 		
-		//starts waiter thread
-		Thread waiter = new Waiter(5000, "Timer Scaduto", chatId);
-		waiter.start();
+		//read the (last) message received and executes command (timer, for now)
+		response = parseMessage(updateText);
 		
-		//writes message ok
-		sendStarted();	
+		//writes response elaborated
+		sendResponse(response);	
 		
 		//send POST getUpdates with updateId++ to sync
 		syncUpdate();
 		
 	}
 
-	private static void firstUpdate() throws InterruptedException
+	private static String firstUpdate() throws InterruptedException
 	{
 		//waits for the first update (message length != 0)
 		int msgQty = 0;
+		String updateText = "";
 		
 		do
 		{
-			Thread.sleep(1000);
+			Thread.sleep(UPDATE_FREQUENCY);
 			response = HttpClientUtil.get
 			(
 				"https://api.telegram.org/bot381629683:AAG35c3Q1TMgxJ74TofHUkpHyyiqI9Swm58/getUpdates"			
@@ -66,6 +76,7 @@ public class Server
 					updateId = message1.getLong("update_id");
 					JSONObject message2 = message1.getJSONObject("message");
 					JSONObject chat = message2.getJSONObject("chat");
+					updateText = message2.getString("text");
 					chatId = chat.getLong("id");
 					
 					System.out.println("messages:\n" + result.toString());
@@ -77,11 +88,70 @@ public class Server
 			}	
 		}
 		while(msgQty <= 0);
+		
+		return updateText;
 	}
 	
-	private static void sendStarted()
+	private static String parseMessage(String updateText)
 	{
-		String message = "";
+		String response = ERROR_MESSAGE;
+		String[] tmp;
+		int millisec = 1;
+		String message = ERROR_MESSAGE;
+		//USE JFLEX MAYBE?
+		
+		if(updateText == null || updateText == "")
+			response = (ERROR_MESSAGE);
+		else if(! (updateText.charAt(0) == ('/')))
+			response = (ERROR_MESSAGE);
+		else
+		{
+			try
+			{
+				switch(updateText.charAt(1))
+				{
+					case 'h':
+					case 'H':
+						response = (COMMANDS_MESSAGE);
+						break;
+					case 't':
+					case 'T':
+						tmp = updateText.split(" ");
+						if(tmp.length == 3 && tmp[0].equals("/timer"))
+						{
+							millisec = Integer.parseInt(tmp[1]);
+							message = tmp[2];
+							startTimer(millisec, message);
+							response = "Timer di " + millisec + " secondi avviato";
+						}
+						else
+							response = (ERROR_MESSAGE);
+						
+						break;
+					default:
+						response = (ERROR_MESSAGE);
+						break;
+				}
+			}
+			catch(Exception e)
+			{
+				response = (ERROR_MESSAGE);
+			}
+		}
+		return response;
+	}
+	
+	private static void startTimer(int millisec, String message)
+	{
+		//starts waiter thread
+		Thread waiter = new Waiter(millisec * 1000, message, chatId);
+		waiter.start();
+		
+		return;
+	}
+	
+	private static void sendResponse(String message)
+	{
 		try
 		{
 			message = "Timer Partito";
