@@ -9,8 +9,8 @@ public class Server
 	private static String responseJSON = "", response = "";
 	private final static int UPDATE_FREQUENCY = 1000;
 	
-	private static final String COMMANDS_MESSAGE = "Uso:\n'/timer <x_secondi> <messaggio>' : aspetta per x_secondi e scrive il messaggio\n" 
-			+ "'/help' : scrive questo messaggio";
+	private static final String COMMANDS_MESSAGE = "Uso:\n'!timer <x_secondi> <messaggio>' : aspetta per x_secondi e scrive il messaggio\n" 
+			+ "'!help' : scrive questo messaggio";
 	//private static final String HELLO_MESSAGE = "Ciao! Questo è un Bot semplice per ricordare appuntamenti.\n" + COMMANDS_MESSAGE;
 	private static final String ERROR_MESSAGE = "Comando non riconosicuto.\n" + COMMANDS_MESSAGE;
 	
@@ -62,7 +62,7 @@ public class Server
 				"https://api.telegram.org/bot381629683:AAG35c3Q1TMgxJ74TofHUkpHyyiqI9Swm58/getUpdates"			
 		    );
 			
-			//	parse response
+			//parse response JSON
 			try
 			{			
 				JSONObject obj = new JSONObject(response);
@@ -92,41 +92,34 @@ public class Server
 		return updateText;
 	}
 	
+	//PARSING RESPONSE TEXT : USE JFLEX MAYBE?
+	//TEMPORARY
 	private static String parseMessage(String updateText)
 	{
 		String response = ERROR_MESSAGE;
 		String[] tmp;
 		int millisec = 1;
 		String message = ERROR_MESSAGE;
-		//USE JFLEX MAYBE?
 		
 		if(updateText == null || updateText == "")
-			response = (ERROR_MESSAGE);
-		else if(! (updateText.charAt(0) == ('/')))
 			response = (ERROR_MESSAGE);
 		else
 		{
 			try
 			{
-				switch(updateText.charAt(1))
+				tmp = updateText.split(" ");
+				
+				switch(tmp[0].toLowerCase())
 				{
-					case 'h':
-					case 'H':
-						response = (COMMANDS_MESSAGE);
+					case "!timer":
+						millisec = Integer.parseInt(tmp[1]);
+						message = tmp[2];
+						startTimer(millisec, message);
+						response = "Timer di " + millisec + " secondi avviato";
 						break;
-					case 't':
-					case 'T':
-						tmp = updateText.split(" ");
-						if(tmp.length == 3 && tmp[0].equals("/timer"))
-						{
-							millisec = Integer.parseInt(tmp[1]);
-							message = tmp[2];
-							startTimer(millisec, message);
-							response = "Timer di " + millisec + " secondi avviato";
-						}
-						else
-							response = (ERROR_MESSAGE);
-						
+					case "!help":
+					case "help":
+						response = COMMANDS_MESSAGE;
 						break;
 					default:
 						response = (ERROR_MESSAGE);
@@ -154,7 +147,6 @@ public class Server
 	{
 		try
 		{
-			message = "Timer Partito";
 			responseJSON = "{ \"text\" : \"" + message + "\", \"chat_id\" : " + chatId+ " }";
 			response = HttpClientUtil.post
 			(
