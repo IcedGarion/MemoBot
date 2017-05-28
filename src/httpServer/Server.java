@@ -4,32 +4,59 @@ import org.json.*;
 
 public class Server
 {
-	//cicla sempre sulla prima get per aspettare update
-	//quando arriva fa partire il timer e manda l'ok
-	//il timer manda fine timer
-	//manda POST getUpdates "offset" : updateId++ per pulire
-	//torna sul primo ciclo
+	private static long chatId = 0;
+	private static long updateId = 0;
+	private static String responseJSON = "", response = "";
 	
 	public static void main(String args[]) throws InterruptedException
 	{
-		String message = "ERROR", responseJSON, firstUpdate, response2 = "";
-		long chatId = 0, updateId = 0;
+		//cicla sempre sulla prima get per aspettare update
+		//quando arriva fa partire il timer e manda l'ok
+		//il timer manda fine timer
+		//manda POST getUpdates "offset" : updateId++ per pulire
+		//torna sul primo ciclo
+		
+		while(true)
+		{
+			mainLoop();
+		}
+	}
+	
+	private static void mainLoop() throws InterruptedException
+	{
+		//waits for an update
+		firstUpdate();
+		
+		//starts waiter thread
+		Thread waiter = new Waiter(5000, "Timer Scaduto", chatId);
+		waiter.start();
+		
+		//writes message ok
+		sendStarted();	
+		
+		//send POST getUpdates with updateId++ to sync
+		syncUpdate();
+		
+	}
+
+	private static void firstUpdate() throws InterruptedException
+	{
+		//waits for the first update (message length != 0)
 		int msgQty = 0;
 		
-		//waits for the first update (message length != 0)
 		do
 		{
 			Thread.sleep(1000);
-			firstUpdate = HttpClientUtil.get
+			response = HttpClientUtil.get
 			(
 				"https://api.telegram.org/bot381629683:AAG35c3Q1TMgxJ74TofHUkpHyyiqI9Swm58/getUpdates"			
-			);
+		    );
 			
-			//parse response
+			//	parse response
 			try
 			{			
-				JSONObject obj = new JSONObject(firstUpdate);
-				System.out.println("getUpdates:\n" + firstUpdate.toString());
+				JSONObject obj = new JSONObject(response);
+				System.out.println("getUpdates:\n" + response.toString());
 				JSONArray result = obj.getJSONArray("result");
 				msgQty = result.length();
 				//	iterates through the messages and gets the last
@@ -50,17 +77,16 @@ public class Server
 			}	
 		}
 		while(msgQty <= 0);
-		
-		//starts waiter thread
-		Thread waiter = new Waiter(5000, "Timer Scaduto", chatId);
-		waiter.start();
-		
-		//writes message ok
+	}
+	
+	private static void sendStarted()
+	{
+		String message = "";
 		try
 		{
 			message = "Timer Partito";
 			responseJSON = "{ \"text\" : \"" + message + "\", \"chat_id\" : " + chatId+ " }";
-			response2 = HttpClientUtil.post
+			response = HttpClientUtil.post
 			(
 					"https://api.telegram.org/bot381629683:AAG35c3Q1TMgxJ74TofHUkpHyyiqI9Swm58/sendMessage",
 					responseJSON
@@ -70,14 +96,16 @@ public class Server
 		{
 			e.printStackTrace();
 		}	
-		System.out.println("sendPartito:\n" + response2.toString());	
-		
-		//send POST getUpdates with updateId++ to sync
+		System.out.println("sendPartito:\n" + response.toString());
+	}
+	
+	private static void syncUpdate()
+	{
 		try
 		{
 			updateId++;
 			responseJSON = "{ \"offset\" : " + updateId + " }";
-			response2 = HttpClientUtil.post
+			response = HttpClientUtil.post
 			(
 					"https://api.telegram.org/bot381629683:AAG35c3Q1TMgxJ74TofHUkpHyyiqI9Swm58/getUpdates",
 					responseJSON
@@ -88,6 +116,6 @@ public class Server
 			e.printStackTrace();
 		}
 			
-		System.out.println("sendLastUpdate:\n" + response2.toString());	
-		}	
+		System.out.println("sendLastUpdate:\n" + response.toString());	
 	}
+}
