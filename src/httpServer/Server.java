@@ -1,18 +1,14 @@
 package httpServer;
 
+import java.util.ArrayList;
 import org.json.*;
 
 public class Server
 {
-	private static long chatId = 0;
-	private static long updateId = 0;
 	private static String responseJSON = "", response = "";
 	private final static int UPDATE_FREQUENCY = 1000;
+	private static long updateId = 0;
 	
-	private static final String COMMANDS_MESSAGE = "Uso:\n'!timer <x_secondi> <messaggio>' : aspetta per x_secondi e scrive il messaggio\n" 
-			+ "'!help' : scrive questo messaggio";
-	//private static final String HELLO_MESSAGE = "Ciao! Questo è un Bot semplice per ricordare appuntamenti.\n" + COMMANDS_MESSAGE;
-	private static final String ERROR_MESSAGE = "Comando non riconosicuto.\n" + COMMANDS_MESSAGE;
 	
 	
 	public static void main(String args[]) throws InterruptedException
@@ -25,27 +21,8 @@ public class Server
 		
 		while(true)
 		{
-			mainLoop();
+			firstUpdate();
 		}
-	}
-	
-	private static void mainLoop() throws InterruptedException
-	{
-		String updateText;
-		String response;
-		
-		//waits for an update
-		updateText = firstUpdate();
-		
-		//read the (last) message received and executes command (timer, for now)
-		response = parseMessage(updateText);
-		
-		//writes response elaborated
-		sendResponse(response);	
-		
-		//send POST getUpdates with updateId++ to sync
-		syncUpdate();
-		
 	}
 
 	private static String firstUpdate() throws InterruptedException
@@ -53,6 +30,8 @@ public class Server
 		//waits for the first update (message length != 0)
 		int msgQty = 0;
 		String updateText = "";
+		JSONObject obj;
+		JSONArray result = null;
 		
 		do
 		{
@@ -62,25 +41,13 @@ public class Server
 				"https://api.telegram.org/bot381629683:AAG35c3Q1TMgxJ74TofHUkpHyyiqI9Swm58/getUpdates"			
 		    );
 			
-			//parse response JSON
+			//parse response JSON to get number of messages pendings
 			try
 			{			
-				JSONObject obj = new JSONObject(response);
+				obj = new JSONObject(response);
 				System.out.println("getUpdates:\n" + response.toString());
-				JSONArray result = obj.getJSONArray("result");
-				msgQty = result.length();
-				//	iterates through the messages and gets the last
-				for(int i=0; i<msgQty; i++)
-				{
-					JSONObject message1 = result.getJSONObject(i);
-					updateId = message1.getLong("update_id");
-					JSONObject message2 = message1.getJSONObject("message");
-					JSONObject chat = message2.getJSONObject("chat");
-					updateText = message2.getString("text");
-					chatId = chat.getLong("id");
-					
-					System.out.println("messages:\n" + result.toString());
-				}		
+				result = obj.getJSONArray("result");
+				msgQty = result.length();		
 			}
 			catch(Exception e)
 			{
@@ -89,76 +56,42 @@ public class Server
 		}
 		while(msgQty <= 0);
 		
-		return updateText;
-	}
-	
-	//PARSING RESPONSE TEXT : USE JFLEX MAYBE?
-	//TEMPORARY
-	private static String parseMessage(String updateText)
-	{
-		String response = ERROR_MESSAGE;
-		String[] tmp;
-		int millisec = 1;
-		String message = ERROR_MESSAGE;
-		
-		if(updateText == null || updateText == "")
-			response = (ERROR_MESSAGE);
-		else
-		{
-			try
-			{
-				tmp = updateText.split(" ");
-				
-				switch(tmp[0].toLowerCase())
-				{
-					case "!timer":
-						millisec = Integer.parseInt(tmp[1]);
-						message = tmp[2];
-						startTimer(millisec, message);
-						response = "Timer di " + millisec + " secondi avviato";
-						break;
-					case "!help":
-					case "help":
-						response = COMMANDS_MESSAGE;
-						break;
-					default:
-						response = (ERROR_MESSAGE);
-						break;
-				}
-			}
-			catch(Exception e)
-			{
-				response = (ERROR_MESSAGE);
-			}
-		}
-		return response;
-	}
-	
-	private static void startTimer(int millisec, String message)
-	{
-		//starts waiter thread
-		Thread waiter = new Waiter(millisec * 1000, message, chatId);
-		waiter.start();
-		
-		return;
-	}
-	
-	private static void sendResponse(String message)
-	{
 		try
 		{
-			responseJSON = "{ \"text\" : \"" + message + "\", \"chat_id\" : " + chatId+ " }";
-			response = HttpClientUtil.post
-			(
-					"https://api.telegram.org/bot381629683:AAG35c3Q1TMgxJ74TofHUkpHyyiqI9Swm58/sendMessage",
-					responseJSON
-		    );
+			JSONObject message1, message2, chat;
+			long chatId = 0;
+			ArrayList<Thread> commandExecuter = new ArrayList<Thread>();
+
+			//iterates through the messages and gets the last
+			for(int i=0; i<msgQty; i++)
+			{
+				message1 = result.getJSONObject(i);
+				updateId = message1.getLong("update_id");
+				message2 = message1.getJSONObject("message");
+				chat = message2.getJSONObject("chat");
+				updateText = message2.getString("text");
+				chatId = chat.getLong("id");
+				
+				//start a thread for every message
+				commandExecuter.add(new MessageExecuter(updateText, chatId));
+				commandExecuter.get(i).start();
+				
+				System.out.println("messages:\n" + result.toString());
+			}
+			
+			//waits for all the messages in the chat to be executed
+			for(Thread m : commandExecuter)
+				m.join();
+			
+			//send POST getUpdates with updateId++ to sync
+			syncUpdate();
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
-		}	
-		System.out.println("sendPartito:\n" + response.toString());
+			e.printStackTrace();	
+		}
+			
+		return updateText;
 	}
 	
 	private static void syncUpdate()
