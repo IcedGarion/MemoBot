@@ -45,7 +45,7 @@ public class Waiter extends Thread
 			}
 			
 					
-			System.out.println("sendTimer:\n" + response.toString());
+			System.out.println("sendScaduto:\n" + response.toString());
 		}
 		
 	}
