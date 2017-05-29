@@ -1,6 +1,9 @@
-package httpServer;
+package parser;
 
 import org.json.JSONArray;
+
+import httpServer.Server;
+import timer.Waiter;
 
 public class MessageExecuter
 {
@@ -8,15 +11,11 @@ public class MessageExecuter
 			+ "'/help' : scrive questo messaggio";
 	private static final String HELLO_MESSAGE = "Ciao! Questo è un Bot semplice per ricordare appuntamenti.\n" + COMMANDS_MESSAGE;
 	private static final String ERROR_MESSAGE = "Comando non riconosicuto.\n" + COMMANDS_MESSAGE;
-	private String updateText;
-	private static long chatId;
-	private static long updateId;
+	private long chatId;
 	
 	public MessageExecuter(String updateText, long chatId, long updateId)
 	{
-		this.updateText = updateText;
 		this.chatId = chatId;
-		this.updateId = updateId;
 	}
 	
 	//PARSING RESPONSE TEXT : USE JFLEX MAYBE?
@@ -81,7 +80,7 @@ public class MessageExecuter
 		
 		
 		
-		private static void startTimer(int millisec, String message)
+		private void startTimer(int millisec, String message)
 		{
 			//starts waiter thread
 			Thread waiter = new Waiter(millisec * 1000, message, chatId);

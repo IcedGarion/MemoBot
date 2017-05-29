@@ -1,7 +1,8 @@
 package httpServer;
 
-import java.util.ArrayList;
 import org.json.*;
+
+import parser.MessageExecuter;
 
 public class Server
 {
@@ -94,7 +95,7 @@ public class Server
 		return updateText;
 	}
 	
-	static void sendResponse(String message)
+	public static void sendResponse(String message)
 	{
 		String responseJSON, response = "";
 		try

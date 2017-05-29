@@ -1,4 +1,6 @@
-package httpServer;
+package timer;
+
+import httpServer.HttpClientUtil;
 
 public class Waiter extends Thread
 {
