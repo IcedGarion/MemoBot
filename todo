@@ -1,0 +1,6 @@
+-/timer e poi non trova niente: problema con updateId++ sicuro (NELLA CHAT DI GRUPPO)
+
+
+-se qualcuno chiede comando /timer (quindi se il server aspetta una risposta), aspettati messaggi solo da lui: però c'è un timeout
+-doomsday clock: prendi il title di http://thebulletin.org/clock/anno
+

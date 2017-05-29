@@ -19,61 +19,66 @@ public class MessageExecuter
 	}
 	
 	//PARSING RESPONSE TEXT : USE JFLEX MAYBE?
-		//TEMPORARY
-		public void executeMessage(String updateText)
+	//TEMPORARY
+	public void executeMessage(String updateText)
+	{
+		String[] tmp;
+		int millisec = 1;
+		String message = ERROR_MESSAGE;
+		
+		try
 		{
-			String[] tmp;
-			int millisec = 1;
-			String message = ERROR_MESSAGE;
-			
-				try
-				{
-					tmp = updateText.split(" ");
-					int length = tmp.length;
-					switch(tmp[0].toLowerCase())
+			tmp = updateText.split(" ");
+			int length = tmp.length;
+			switch(tmp[0].toLowerCase())
+			{
+				case "/start":
+					Server.sendResponse(HELLO_MESSAGE);
+					break;
+				case "/timer":
+					if(length == 3)
 					{
-						case "/start":
-							Server.sendResponse(HELLO_MESSAGE);
-							break;
-						case "/timer":
-							if(length == 3)
-							{
-								millisec = Integer.parseInt(tmp[1]);
-								message = tmp[2];
-								startTimer(millisec, message);
-								Server.sendResponse("Timer di " + millisec + " secondi avviato");
-							}
-							else if(length == 1)
-							{
-								Server.sendResponse("Inserisci secondi e messaggio, separati da spazio");
-								
-								//waits for the response text
-								JSONArray tmpAr = Server.firstUpdate();
-								String msgText = Server.parseMessage(tmpAr);
-								String[] tmp2 = msgText.split(" ");
-								
-								millisec = Integer.parseInt(tmp2[0]);
-								message = tmp2[1];
-								startTimer(millisec, message);
-								Server.sendResponse("Timer di " + millisec + " secondi avviato");								
-							}
-							else
-								Server.sendResponse(ERROR_MESSAGE);
-							break;
-						case "/help":
-						case "help":
-							Server.sendResponse(COMMANDS_MESSAGE);
-							break;
-						default:
+						millisec = Integer.parseInt(tmp[1]);
+						if(millisec <= 0)
+						{
 							Server.sendResponse(ERROR_MESSAGE);
 							break;
+						}
+							
+						message = tmp[2];
+						startTimer(millisec, message);
+						Server.sendResponse("Timer di " + millisec + " secondi avviato");
 					}
-				}
-				catch(Exception e)
-				{
+					else if(length == 1)
+					{
+						Server.sendResponse("Inserisci secondi e messaggio, separati da spazio");
+							
+						//waits for the response text
+						JSONArray tmpAr = Server.firstUpdate();
+						String msgText = Server.parseMessage(tmpAr);
+						String[] tmp2 = msgText.split(" ");
+							
+						millisec = Integer.parseInt(tmp2[0]);
+						message = tmp2[1];
+						startTimer(millisec, message);
+						Server.sendResponse("Timer di " + millisec + " secondi avviato");								
+					}
+					else
+						Server.sendResponse(ERROR_MESSAGE);
+					break;
+				case "/help":
+				case "help":
+					Server.sendResponse(COMMANDS_MESSAGE);
+					break;
+				default:
 					Server.sendResponse(ERROR_MESSAGE);
+					break;
 				}
-			
+			}
+			catch(Exception e)
+			{
+				Server.sendResponse(ERROR_MESSAGE);
+			}
 			
 			return;
 		}
