@@ -22,33 +22,38 @@ public class MessageExecuter
 	//TEMPORARY
 	public void executeMessage(String updateText)
 	{
-		String[] tmp;
+		String[] readMessage;
 		int millisec = 1;
 		String message = ERROR_MESSAGE;
 		
 		try
 		{
-			tmp = updateText.split(" ");
-			int length = tmp.length;
-			switch(tmp[0].toLowerCase())
+			readMessage = updateText.split(" ");
+			int length = readMessage.length;
+			switch(readMessage[0].toLowerCase())
 			{
 				case "/start":
+				case "/start@stanzinomemobot":
 					Server.sendResponse(HELLO_MESSAGE);
 					break;
 				case "/timer":
-					if(length == 3)
+				case "/timer@stanzinomemobot":
+					if(length >= 3)
 					{
-						millisec = Integer.parseInt(tmp[1]);
+						millisec = Integer.parseInt(readMessage[1]);
 						if(millisec <= 0)
 						{
 							Server.sendResponse(ERROR_MESSAGE);
 							break;
 						}
 							
-						message = tmp[2];
+						message = "";
+						for(int i=2; i<readMessage.length; i++)
+							message += readMessage[i];
 						startTimer(millisec, message);
 						Server.sendResponse("Timer di " + millisec + " secondi avviato");
 					}
+					/*
 					else if(length == 1)
 					{
 						Server.sendResponse("Inserisci secondi e messaggio, separati da spazio");
@@ -56,18 +61,28 @@ public class MessageExecuter
 						//waits for the response text
 						JSONArray tmpAr = Server.firstUpdate();
 						String msgText = Server.parseMessage(tmpAr);
-						String[] tmp2 = msgText.split(" ");
+						String[] readMessage2 = msgText.split(" ");
 							
-						millisec = Integer.parseInt(tmp2[0]);
-						message = tmp2[1];
-						startTimer(millisec, message);
-						Server.sendResponse("Timer di " + millisec + " secondi avviato");								
+						millisec = Integer.parseInt(readMessage2[0]);
+						
+						if(millisec < 0)
+							Server.sendResponse(ERROR_MESSAGE);
+						else
+						{
+							message = "";
+							for(int i=1; i<readMessage2.length; i++)
+								message += readMessage2[i];
+							startTimer(millisec, message);
+							Server.sendResponse("Timer di " + millisec + " secondi avviato");
+						}
 					}
+					*/
 					else
 						Server.sendResponse(ERROR_MESSAGE);
 					break;
 				case "/help":
 				case "help":
+				case "/help@stanzinomemobot":
 					Server.sendResponse(COMMANDS_MESSAGE);
 					break;
 				default:

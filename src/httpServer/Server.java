@@ -112,7 +112,7 @@ public class Server
 			e.printStackTrace();
 		}	
 		
-		System.out.println("sendPartito:\n" + response.toString());
+		System.out.println("sendResponse:\n" + response.toString());
 		
 		syncUpdate();
 		

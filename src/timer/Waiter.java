@@ -1,5 +1,8 @@
 package timer;
 
+//MILLISEC O MILLISEC * 100? SEND RISPOSTA COL SERVER E NON DA SOLO.
+
+
 import httpServer.HttpClientUtil;
 
 public class Waiter extends Thread
