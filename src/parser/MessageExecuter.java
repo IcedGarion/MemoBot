@@ -1,27 +1,31 @@
 package parser;
 
+import java.util.Calendar;
+
 import org.json.JSONArray;
 
+import httpServer.HttpClientUtil;
 import httpServer.Server;
 import timer.Waiter;
 
 public class MessageExecuter
 {
 	private static final String COMMANDS_MESSAGE = "Uso:\n'/timer <x_secondi> <messaggio>' : aspetta per x_secondi e scrive il messaggio\n" 
-			+ "'/help' : scrive questo messaggio";
+			+ "'/help' : scrive questo messaggio\n"
+			+ "'/doomsday' : Doomsday clock dell'anno corrente\n"
+			+ "'/doomsday <anno> : Doomsday clock dell'anno inserito\n"
+			+ "'/random' : Numero random fra 0 e 1\n"
+			+ "'/random <min> <max> : Numero random fra i due estremi";
 	private static final String HELLO_MESSAGE = "Ciao! Questo è un Bot semplice per ricordare appuntamenti.\n" + COMMANDS_MESSAGE;
-	private static final String ERROR_MESSAGE = "Comando non riconosicuto.\n" + COMMANDS_MESSAGE;
-	private long chatId;
-	
-	public MessageExecuter(String updateText, long chatId, long updateId)
-	{
-		this.chatId = chatId;
-	}
+	private static final String ERROR_MESSAGE = "Comando non riconosicuto.\n" + COMMANDS_MESSAGE;	
+	private static long chatId;
 	
 	//PARSING RESPONSE TEXT : USE JFLEX MAYBE?
 	//TEMPORARY
-	public void executeMessage(String updateText)
+	public static void executeMessage(String updateText, long chatId)
 	{
+		MessageExecuter.chatId = chatId;
+		
 		String[] readMessage;
 		int millisec = 1;
 		String message = ERROR_MESSAGE;
@@ -54,6 +58,7 @@ public class MessageExecuter
 						Server.sendResponse("Timer di " + millisec + " secondi avviato");
 					}
 					/*
+					 * USARE FORCEREPLY
 					else if(length == 1)
 					{
 						Server.sendResponse("Inserisci secondi e messaggio, separati da spazio");
@@ -80,6 +85,46 @@ public class MessageExecuter
 					else
 						Server.sendResponse(ERROR_MESSAGE);
 					break;
+				case "/doomsday":
+				case "/doomsday@stanzinomemobot":
+					if(length == 1)
+						Server.sendResponse(getDoomsday(null));
+					else if(length == 2)
+					{
+						if(readMessage[1].matches("^(19|20)\\d{2}$"))
+							Server.sendResponse(getDoomsday(readMessage[1]));
+					}
+					else
+						Server.sendResponse(ERROR_MESSAGE);
+					
+					break;
+				case "/random":
+				case "/random@stanzinomemobot":
+					if(length == 1)
+					{
+						if(Math.random() < 0.5)
+							Server.sendResponse("Random: 0");
+						else
+							Server.sendResponse("Random: 1");
+					}
+					else if(length == 3)
+					{
+						int min = Integer.parseInt(readMessage[1]);
+						int max = Integer.parseInt(readMessage[2]);
+						
+						if(max < min)
+						{
+							int tmp = max;
+							max = min;
+							min = tmp;
+						}
+						
+						Server.sendResponse("Random: " + (int) (Math.random() * ((max - min) + 1) + min));
+					}
+					else
+						Server.sendResponse(ERROR_MESSAGE);
+					
+					break;
 				case "/help":
 				case "help":
 				case "/help@stanzinomemobot":
@@ -98,9 +143,7 @@ public class MessageExecuter
 			return;
 		}
 		
-		
-		
-		private void startTimer(int millisec, String message)
+		private static void startTimer(int millisec, String message)
 		{
 			//starts waiter thread
 			Thread waiter = new Waiter(millisec * 1000, message, chatId);
@@ -109,5 +152,18 @@ public class MessageExecuter
 			return;
 		}
 
-		
+		private static String getDoomsday(String year)
+		{
+			if(year == null)
+			{
+				year = "" + Calendar.getInstance().get(Calendar.YEAR);
+			}
+			
+			String response = HttpClientUtil.get
+			(
+					"http://thebulletin.org/clock/2017"	
+			);
+			
+			return null;
+		}
 }

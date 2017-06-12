@@ -28,8 +28,7 @@ public class Server
 			msgText = parseMessage(result);
 			
 			//parse the last message
-			MessageExecuter e = new MessageExecuter(msgText, chatId, updateId);
-			e.executeMessage(msgText);
+			MessageExecuter.executeMessage(msgText, chatId);
 		}
 	}
 	
