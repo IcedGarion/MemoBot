@@ -1,5 +1,13 @@
 package httpServer;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+
 import org.json.*;
 
 import parser.MessageExecuter;
@@ -10,15 +18,15 @@ public class Server
 	private final static int UPDATE_FREQUENCY = 1000;
 	private static long updateId = 0;
 	private static long chatId = 0;
+	private static PrintWriter writer;
 	
-	
-	public static void main(String args[]) throws InterruptedException
+	public static void main(String args[]) throws Exception
 	{
 		JSONArray result;
 		String msgText;
+		writer = new PrintWriter(new BufferedWriter(new FileWriter("./log", true)));
 		//cicla sempre sulla prima get per aspettare update
-		//quando arriva fa partire il timer e manda l'ok
-		//il timer manda fine timer
+		//quando arriva un comando chiama MessageExecuter che esegue chiamando la funzione giusta
 		//manda POST getUpdates "offset" : updateId++ per pulire
 		//torna sul primo ciclo
 		
@@ -51,13 +59,16 @@ public class Server
 			try
 			{			
 				obj = new JSONObject(response);
-				System.out.println("getUpdates:\n" + response.toString());
 				result = obj.getJSONArray("result");
-				msgQty = result.length();		
+				msgQty = result.length();	
+				
+				if(msgQty == 0)
+					System.out.println("There are no new messages");
 			}
 			catch(Exception e)
 			{
 				e.printStackTrace();
+				System.out.println("EXCEPTION in getUpdates : " + e.getMessage());
 			}	
 		}
 		while(msgQty <= 0);
@@ -67,8 +78,8 @@ public class Server
 
 	public static String parseMessage(JSONArray result)
 	{
-		JSONObject message1, message2, chat;
-		String updateText = "/help";
+		JSONObject message1, message2, chat, from;
+		String updateText = "/help", firstName = "";
 		
 		try
 		{
@@ -81,25 +92,47 @@ public class Server
 				chat = message2.getJSONObject("chat");
 				updateText = message2.getString("text");
 				chatId = chat.getLong("id");
+				from = message2.getJSONObject("from");
+				firstName = from.getString("first_name");
 				
-				System.out.println("messages:\n" + result.toString());
+				//anyway, logs all the commands read
+				writer.println(firstName + ", " + updateText);
+				writer.flush();
+				
+				System.out.println("New Message   : " + updateText + "From : " + firstName);
 			}
-			
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();	
+			//e.printStackTrace();
+			System.out.println("EXCEPTION in parseMessage : " + e.getMessage());
 		}
 		
 		return updateText;
 	}
-	
+
 	public static void sendResponse(String message)
 	{
-		String responseJSON, response = "";
+		send(message, chatId);
+		
+		syncUpdate();
+		
+		return;
+	}
+	
+	public static void sendAsyncResponse(String message, long anotherChatId)
+	{
+		send(message, chatId);
+		
+		return;
+	}
+	
+	private static void send(String message, long aChatId)
+	{
+		String responseJSON = "";
 		try
 		{
-			responseJSON = "{ \"text\" : \"" + message + "\", \"chat_id\" : " + chatId+ " }";
+			responseJSON = "{ \"text\" : \"" + message + "\", \"chat_id\" : " + aChatId+ " }";
 			response = HttpClientUtil.post
 			(
 					"https://api.telegram.org/bot381629683:AAG35c3Q1TMgxJ74TofHUkpHyyiqI9Swm58/sendMessage",
@@ -108,14 +141,11 @@ public class Server
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.out.println("EXCEPTION in sendResponse : " + e.getMessage());
 		}	
 		
-		System.out.println("sendResponse:\n" + response.toString());
-		
-		syncUpdate();
-		
-		return;
+		System.out.println("Response sent : " + responseJSON.toString());
 	}
 	
 	private static void syncUpdate()
@@ -129,12 +159,13 @@ public class Server
 					"https://api.telegram.org/bot381629683:AAG35c3Q1TMgxJ74TofHUkpHyyiqI9Swm58/getUpdates",
 					responseJSON
 		    );
+			
+			System.out.println("Sync          : OK");
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.out.println("EXCEPTION in syncUpdate : " + e.getMessage());
 		}
-			
-		System.out.println("sendLastUpdate:\n" + response.toString());	
 	}
 }
