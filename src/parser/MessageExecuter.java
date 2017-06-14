@@ -112,7 +112,7 @@ public class MessageExecuter
 		catch(Exception e)
 		{
 			Server.sendResponse(ERROR_MESSAGE);
-			LOGGER.warning(e.getMessage());
+			LOGGER.warning(e.getMessage() + "\n");
 		}
 
 		return;

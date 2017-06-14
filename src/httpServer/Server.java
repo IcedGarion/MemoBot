@@ -61,12 +61,12 @@ public class Server
 				msgQty = result.length();	
 				
 				if(msgQty == 0)
-					LOGGER.info("There are no new messages");
+					LOGGER.info("There are no new messages" + "\n");
 			}
 			catch(Exception e)
 			{
 				e.printStackTrace();
-				LOGGER.info("EXCEPTION in getUpdates : " + e.getMessage());
+				LOGGER.info("EXCEPTION in getUpdates : " + e.getMessage() + "\n");
 			}	
 		}
 		while(msgQty <= 0);
@@ -97,13 +97,13 @@ public class Server
 				writer.println(firstName + " " + updateText + " " + Util.getDate());
 				writer.flush();
 				
-				LOGGER.info("New Message   : " + updateText + "From : " + firstName);
+				LOGGER.info("New Message   : " + updateText + "From : " + firstName + "\n");
 			}
 		}
 		catch(Exception e)
 		{
 			//e.printStackTrace();
-			LOGGER.info("EXCEPTION in parseMessage : " + e.getMessage());
+			LOGGER.info("EXCEPTION in parseMessage : " + e.getMessage() + "\n");
 		}
 		
 		return updateText;
@@ -140,10 +140,10 @@ public class Server
 		catch(Exception e)
 		{
 			//e.printStackTrace();
-			LOGGER.warning("EXCEPTION in sendResponse : " + e.getMessage());
+			LOGGER.warning("EXCEPTION in sendResponse : " + e.getMessage() + "\n");
 		}	
 		
-		LOGGER.info("Response sent : " + responseJSON.toString());
+		LOGGER.info("Response sent : " + message + "\n");
 	}
 	
 	private static void syncUpdate()
@@ -158,12 +158,12 @@ public class Server
 					responseJSON
 		    );
 			
-			LOGGER.info("Sync          : OK");
+			LOGGER.info("Sync          : OK" + "\n");
 		}
 		catch(Exception e)
 		{
 			//e.printStackTrace();
-			LOGGER.info("EXCEPTION in syncUpdate : " + e.getMessage());
+			LOGGER.info("EXCEPTION in syncUpdate : " + e.getMessage() + "\n");
 		}
 	}
 }

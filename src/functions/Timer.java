@@ -30,7 +30,7 @@ public class Timer extends Thread
 		catch(Exception e)
 		{
 			msg = "ERRORE";
-			LOGGER.severe(e.getMessage());
+			LOGGER.severe(e.getMessage() + "\n");
 		}
 		finally
 		{
