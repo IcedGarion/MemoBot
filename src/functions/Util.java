@@ -1,5 +1,6 @@
 package functions;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import httpServer.HttpClientUtil;
@@ -95,5 +96,10 @@ public class Util
 	{
 		for(int i=1; i<array.length; i++)
 			Integer.parseInt(array[i]);
+	}
+	
+	public static String getDate()
+	{
+		return new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
 	}
 }

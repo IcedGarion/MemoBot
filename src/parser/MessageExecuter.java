@@ -1,5 +1,7 @@
 package parser;
 
+import java.util.logging.Logger;
+
 import functions.Util;
 import httpServer.Server;
 
@@ -17,6 +19,8 @@ public class MessageExecuter
 	private static final String ERROR_MESSAGE = "Comando non riconosicuto.\n" + COMMANDS_MESSAGE;
 	private static final int MAX_RANDOM_SEQUENCE = 20;
 	private static long chatId;
+	private static final Logger LOGGER = Logger.getLogger( MessageExecuter.class.getName() );
+
 
 	public static void executeMessage(String updateText, long chatId)
 	{
@@ -108,7 +112,7 @@ public class MessageExecuter
 		catch(Exception e)
 		{
 			Server.sendResponse(ERROR_MESSAGE);
-			System.out.println(e.getMessage());
+			LOGGER.warning(e.getMessage());
 		}
 
 		return;

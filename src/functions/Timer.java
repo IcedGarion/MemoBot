@@ -1,5 +1,7 @@
 package functions;
 
+import java.util.logging.Logger;
+
 import httpServer.Server;
 
 public class Timer extends Thread
@@ -7,6 +9,8 @@ public class Timer extends Thread
 	private int millisecs;
 	private String msg;
 	private long chatId;
+	private static final Logger LOGGER = Logger.getLogger( Timer.class.getName() );
+	
 	
 	public Timer(int millisecs, String message, long chatId)
 	{
@@ -26,7 +30,7 @@ public class Timer extends Thread
 		catch(Exception e)
 		{
 			msg = "ERRORE";
-			System.out.println(e.getMessage());
+			LOGGER.severe(e.getMessage());
 		}
 		finally
 		{

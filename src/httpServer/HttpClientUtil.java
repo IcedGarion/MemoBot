@@ -52,12 +52,14 @@ public class HttpClientUtil
  		wr.flush();
  		wr.close();
 
+ 		/*
  		int responseCode = con.getResponseCode();
  		System.out.println("\nSending 'POST' request to URL : " + url);
  		System.out.println("Post parameters : " + json);
  		System.out.println("Response Code : " + responseCode);
  		System.out.println("Response msg : " + con.getResponseMessage());
-
+		*/
+ 		
  		return writeResp(con);
  	}
  	

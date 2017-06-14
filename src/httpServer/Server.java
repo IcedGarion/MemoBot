@@ -3,22 +3,20 @@ package httpServer;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 import org.json.*;
-
+import functions.Util;
 import parser.MessageExecuter;
 
 public class Server
 {
 	private static String responseJSON = "", response = "";
-	private final static int UPDATE_FREQUENCY = 1000;
+	private final static int UPDATE_FREQUENCY = 500;
 	private static long updateId = 0;
 	private static long chatId = 0;
 	private static PrintWriter writer;
+	private static final Logger LOGGER = Logger.getLogger( Server.class.getName() );
 	
 	public static void main(String args[]) throws Exception
 	{
@@ -63,12 +61,12 @@ public class Server
 				msgQty = result.length();	
 				
 				if(msgQty == 0)
-					System.out.println("There are no new messages");
+					LOGGER.info("There are no new messages");
 			}
 			catch(Exception e)
 			{
 				e.printStackTrace();
-				System.out.println("EXCEPTION in getUpdates : " + e.getMessage());
+				LOGGER.info("EXCEPTION in getUpdates : " + e.getMessage());
 			}	
 		}
 		while(msgQty <= 0);
@@ -96,16 +94,16 @@ public class Server
 				firstName = from.getString("first_name");
 				
 				//anyway, logs all the commands read
-				writer.println(firstName + ", " + updateText);
+				writer.println(firstName + " " + updateText + " " + Util.getDate());
 				writer.flush();
 				
-				System.out.println("New Message   : " + updateText + "From : " + firstName);
+				LOGGER.info("New Message   : " + updateText + "From : " + firstName);
 			}
 		}
 		catch(Exception e)
 		{
 			//e.printStackTrace();
-			System.out.println("EXCEPTION in parseMessage : " + e.getMessage());
+			LOGGER.info("EXCEPTION in parseMessage : " + e.getMessage());
 		}
 		
 		return updateText;
@@ -142,10 +140,10 @@ public class Server
 		catch(Exception e)
 		{
 			//e.printStackTrace();
-			System.out.println("EXCEPTION in sendResponse : " + e.getMessage());
+			LOGGER.warning("EXCEPTION in sendResponse : " + e.getMessage());
 		}	
 		
-		System.out.println("Response sent : " + responseJSON.toString());
+		LOGGER.info("Response sent : " + responseJSON.toString());
 	}
 	
 	private static void syncUpdate()
@@ -160,12 +158,12 @@ public class Server
 					responseJSON
 		    );
 			
-			System.out.println("Sync          : OK");
+			LOGGER.info("Sync          : OK");
 		}
 		catch(Exception e)
 		{
 			//e.printStackTrace();
-			System.out.println("EXCEPTION in syncUpdate : " + e.getMessage());
+			LOGGER.info("EXCEPTION in syncUpdate : " + e.getMessage());
 		}
 	}
 }
