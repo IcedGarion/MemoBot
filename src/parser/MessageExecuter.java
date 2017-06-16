@@ -1,5 +1,6 @@
 package parser;
 
+import java.io.IOException;
 import java.util.logging.Logger;
 
 import functions.Util;
@@ -22,7 +23,7 @@ public class MessageExecuter
 	private static final Logger LOGGER = Logger.getLogger( MessageExecuter.class.getName() );
 
 
-	public static void executeMessage(String updateText, long chatId)
+	public static void executeMessage(String updateText, long chatId) throws SecurityException, IOException
 	{
 		MessageExecuter.chatId = chatId;
 

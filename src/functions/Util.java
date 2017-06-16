@@ -1,5 +1,6 @@
 package functions;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import httpServer.HttpClientUtil;
@@ -39,7 +40,7 @@ public class Util
 		return (min * 60) + (hour * 3600);
 	}
 	
-	public static void startTimer(int millisec, String message, long chatId)
+	public static void startTimer(int millisec, String message, long chatId) throws SecurityException, IOException
 	{
 		//starts waiter thread
 		Thread waiter = new Timer(millisec * 1000, message, chatId);

@@ -1,33 +1,36 @@
 package httpServer;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.PrintWriter;
+import java.io.IOException;
 import java.util.logging.Logger;
 
 import org.json.*;
 import functions.Util;
+import logger.Writer;
 import parser.MessageExecuter;
 
 public class Server
 {
+	public static String OUTPUT_PATH = "./out/log";
+	private static String NAMES_PATH = "./out/commands";
 	private static String responseJSON = "", response = "";
 	private final static int UPDATE_FREQUENCY = 500;
 	private static long updateId = 0;
 	private static long chatId = 0;
-	private static PrintWriter writer;
-	private static final Logger LOGGER = Logger.getLogger( Server.class.getName() );
+	private static Writer logger;
+	private static Writer namesLogger;
 	
 	public static void main(String args[]) throws Exception
 	{
 		JSONArray result;
 		String msgText;
-		writer = new PrintWriter(new BufferedWriter(new FileWriter("./log", true)));
+		logger = new Writer(Logger.getLogger(Server.class.getName()), OUTPUT_PATH);
+		namesLogger = new Writer(NAMES_PATH);
 		//cicla sempre sulla prima get per aspettare update
 		//quando arriva un comando chiama MessageExecuter che esegue chiamando la funzione giusta
 		//manda POST getUpdates "offset" : updateId++ per pulire
 		//torna sul primo ciclo
 		
+		logger.info("Bot Running... ");
 		while(true)
 		{
 			result = firstUpdate();
@@ -38,7 +41,7 @@ public class Server
 		}
 	}
 	
-	public static JSONArray firstUpdate() throws InterruptedException
+	public static JSONArray firstUpdate() throws InterruptedException, SecurityException, IOException
 	{
 		//waits for the first update (message length != 0)
 		int msgQty = 0;
@@ -59,14 +62,11 @@ public class Server
 				obj = new JSONObject(response);
 				result = obj.getJSONArray("result");
 				msgQty = result.length();	
-				
-				if(msgQty == 0)
-					LOGGER.info("There are no new messages" + "\n");
 			}
 			catch(Exception e)
 			{
-				e.printStackTrace();
-				LOGGER.info("EXCEPTION in getUpdates : " + e.getMessage() + "\n");
+				//e.printStackTrace();
+				logger.warning("NO CONNECTION!\n");
 			}	
 		}
 		while(msgQty <= 0);
@@ -74,7 +74,7 @@ public class Server
 		return result;
 	}
 
-	public static String parseMessage(JSONArray result)
+	public static String parseMessage(JSONArray result) throws SecurityException, IOException
 	{
 		JSONObject message1, message2, chat, from;
 		String updateText = "/help", firstName = "";
@@ -94,22 +94,22 @@ public class Server
 				firstName = from.getString("first_name");
 				
 				//anyway, logs all the commands read
-				writer.println(firstName + " " + updateText + " " + Util.getDate());
-				writer.flush();
+				namesLogger.write(firstName + " " + updateText + " " + Util.getDate());
+				logger.info("New Message   : " + updateText + "From : " + firstName + "\n");
 				
-				LOGGER.info("New Message   : " + updateText + "From : " + firstName + "\n");
 			}
 		}
 		catch(Exception e)
 		{
 			//e.printStackTrace();
-			LOGGER.info("EXCEPTION in parseMessage : " + e.getMessage() + "\n");
+			logger.info("EXCEPTION in parseMessage : " + e.getMessage() + "\n");
+			
 		}
 		
 		return updateText;
 	}
 
-	public static void sendResponse(String message)
+	public static void sendResponse(String message) throws SecurityException, IOException
 	{
 		send(message, chatId);
 		
@@ -118,14 +118,14 @@ public class Server
 		return;
 	}
 	
-	public static void sendAsyncResponse(String message, long anotherChatId)
+	public static void sendAsyncResponse(String message, long anotherChatId) throws SecurityException, IOException
 	{
 		send(message, chatId);
 		
 		return;
 	}
 	
-	private static void send(String message, long aChatId)
+	private static void send(String message, long aChatId) throws SecurityException, IOException
 	{
 		String responseJSON = "";
 		try
@@ -140,13 +140,15 @@ public class Server
 		catch(Exception e)
 		{
 			//e.printStackTrace();
-			LOGGER.warning("EXCEPTION in sendResponse : " + e.getMessage() + "\n");
+			logger.warning("EXCEPTION in sendResponse : " + e.getMessage() + "\n");
+			
 		}	
 		
-		LOGGER.info("Response sent : " + message + "\n");
+		logger.info("Response sent : " + message + "\n");
+		
 	}
 	
-	private static void syncUpdate()
+	private static void syncUpdate() throws SecurityException, IOException
 	{
 		try
 		{
@@ -158,12 +160,14 @@ public class Server
 					responseJSON
 		    );
 			
-			LOGGER.info("Sync          : OK" + "\n");
+			logger.info("Sync          : OK" + "\n");
+			
 		}
 		catch(Exception e)
 		{
 			//e.printStackTrace();
-			LOGGER.info("EXCEPTION in syncUpdate : " + e.getMessage() + "\n");
+			logger.info("EXCEPTION in syncUpdate : " + e.getMessage() + "\n");
+			
 		}
 	}
 }
