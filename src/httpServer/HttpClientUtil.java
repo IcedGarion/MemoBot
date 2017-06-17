@@ -32,7 +32,7 @@ public class HttpClientUtil
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
         return json;

@@ -18,10 +18,17 @@ public class Writer extends Thread
 	private boolean log;
 	private PrintWriter writer;
 	
-	public Writer(String outPath) throws IOException
+	public Writer(String outPath)
 	{
 		this.log = false;
-		writer = new PrintWriter(new BufferedWriter(new FileWriter(outPath, true)));
+		try
+		{
+			writer = new PrintWriter(new BufferedWriter(new FileWriter(outPath, true)));
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
     public Writer(Logger logger, String outPath) throws SecurityException, IOException

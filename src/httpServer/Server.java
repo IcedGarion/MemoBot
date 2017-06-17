@@ -3,6 +3,8 @@ package httpServer;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import javax.management.timer.Timer;
+
 import org.json.*;
 import functions.Util;
 import logger.Writer;
@@ -10,21 +12,27 @@ import parser.MessageExecuter;
 
 public class Server
 {
+	private static final int TIMEOUT = 30000; 				//30 sec di timeout se rimane senza connessione per troppo
+	private static final int MAX_NOCONNECTION = 15;			//max 15 richieste senza connessione e aspetta		
 	public static String OUTPUT_PATH = "./out/log";
 	private static String NAMES_PATH = "./out/commands";
+	public static String TIMES_PATH = "./out/times";
 	private static String responseJSON = "", response = "";
 	private final static int UPDATE_FREQUENCY = 500;
 	private static long updateId = 0;
 	private static long chatId = 0;
 	private static Writer logger;
 	private static Writer namesLogger;
+	private static Timer timer;
 	
-	public static void main(String args[]) throws Exception
+	public static void MemoBot() throws Exception
 	{
 		JSONArray result;
 		String msgText;
 		logger = new Writer(Logger.getLogger(Server.class.getName()), OUTPUT_PATH);
 		namesLogger = new Writer(NAMES_PATH);
+		timer = new Timer();
+		timer.start();
 		//cicla sempre sulla prima get per aspettare update
 		//quando arriva un comando chiama MessageExecuter che esegue chiamando la funzione giusta
 		//manda POST getUpdates "offset" : updateId++ per pulire
@@ -41,32 +49,45 @@ public class Server
 		}
 	}
 	
-	public static JSONArray firstUpdate() throws InterruptedException, SecurityException, IOException
+	public static JSONArray firstUpdate() throws SecurityException, IOException, InterruptedException
 	{
 		//waits for the first update (message length != 0)
-		int msgQty = 0;
+		int msgQty = 0, conta = 0;
+		boolean first = true;
 		JSONObject obj;
 		JSONArray result = null;
 		
 		do
 		{
-			Thread.sleep(UPDATE_FREQUENCY);
-			response = HttpClientUtil.get
-			(
-				"https://api.telegram.org/bot381629683:AAG35c3Q1TMgxJ74TofHUkpHyyiqI9Swm58/getUpdates"			
-		    );
-			
-			//parse response JSON to get number of messages pendings
+			if(conta >= MAX_NOCONNECTION)
+			{
+				conta = 0;
+				Thread.sleep(TIMEOUT);
+			}
 			try
-			{			
+			{
+				Thread.sleep(UPDATE_FREQUENCY);
+				response = HttpClientUtil.get
+				(
+					"https://api.telegram.org/bot381629683:AAG35c3Q1TMgxJ74TofHUkpHyyiqI9Swm58/getUpdates"			
+				);
+			
+				//parse response JSON to get number of messages pendings
 				obj = new JSONObject(response);
 				result = obj.getJSONArray("result");
 				msgQty = result.length();	
+				
+				if(first)
+				{
+					first = false;
+					logger.info("Bot Can Get Updates...");
+				}
 			}
 			catch(Exception e)
 			{
 				//e.printStackTrace();
 				logger.warning("NO CONNECTION!\n");
+				conta++;
 			}	
 		}
 		while(msgQty <= 0);
@@ -109,6 +130,7 @@ public class Server
 		return updateText;
 	}
 
+	//for immediate response
 	public static void sendResponse(String message) throws SecurityException, IOException
 	{
 		send(message, chatId);
@@ -118,6 +140,7 @@ public class Server
 		return;
 	}
 	
+	//for timer
 	public static void sendAsyncResponse(String message, long anotherChatId) throws SecurityException, IOException
 	{
 		send(message, chatId);
@@ -148,6 +171,7 @@ public class Server
 		
 	}
 	
+	//resets the offset to wait for NEW msg
 	private static void syncUpdate() throws SecurityException, IOException
 	{
 		try

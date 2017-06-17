@@ -4,9 +4,14 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import httpServer.HttpClientUtil;
+import httpServer.Server;
+import logger.Writer;
 
 public class Util
 {
+	private static Writer writer = new Writer(Server.TIMES_PATH); 
+	private static Calendar c = Calendar.getInstance();;
+	
 	public static String getDoomsday(String year)
 	{
 		if(year == null)
@@ -31,20 +36,20 @@ public class Util
 		return text;
 	}
 	
-	public static int toMillisec(String string)
+	public static long toMillisec(String string)
 	{
 		String tmp[] = string.split(":");
-		int hour = Integer.parseInt(tmp[0]);
-		int min = Integer.parseInt(tmp[1]);
+		long hour = Long.parseLong(tmp[0]);
+		long min = Long.parseLong(tmp[1]);
 		
 		return (min * 60) + (hour * 3600);
 	}
 	
-	public static void startTimer(int millisec, String message, long chatId) throws SecurityException, IOException
+	public static void startTimer(long millisec, String message, long chatId) throws SecurityException, IOException
 	{
-		//starts waiter thread
-		Thread waiter = new Timer(millisec * 1000, message, chatId);
-		waiter.start();
+		//writes the time and msg in a file: current time (millisec) + timer
+		millisec = (millisec * 1000) + c.getTimeInMillis();
+		writer.write(millisec + "," + message + "," + chatId);
 		
 		return;
 	}

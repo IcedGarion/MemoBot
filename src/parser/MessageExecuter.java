@@ -28,7 +28,7 @@ public class MessageExecuter
 		MessageExecuter.chatId = chatId;
 
 		String[] readMessage;
-		int sec = 1;
+		long sec = 1;
 		String message = ERROR_MESSAGE;
 
 		try
