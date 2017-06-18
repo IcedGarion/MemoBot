@@ -1,14 +1,12 @@
 package functions;
 
-import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Calendar;
-import java.util.logging.Logger;
+import java.util.List;
 
 import httpServer.Server;
-import logger.Writer;
 
 /**
  * Reads forever from the file, waiting the time to notify
@@ -16,25 +14,24 @@ import logger.Writer;
 public class Timer extends Thread
 {	
 	private final static int CHECK_TIME = 1000;  //1 sec sleep
-	private final static int DELTA_PRECISION = 5000;  //5 sec oscillazione
-	private Writer writer;
-	private BufferedReader reader;
 	private Calendar calendar;
+	private File file;
 	
 	public Timer() throws FileNotFoundException
 	{
-		writer = new Writer(Server.TIMES_PATH);
-		reader = new BufferedReader(new FileReader(Server.TIMES_PATH));
-		calendar = Calendar.getInstance();
+		file = new File(Server.TIMES_PATH);
 	}
 	
 	@Override
 	public void run()
 	{
-		String line, message = "", chatId = "", file = "";
+		String message = "";
 		String[] tmp;
-		long millisec;
-		
+		long millisec, chatId, current;
+		int index = 0;
+		List<String> lines; 
+		int removeIndex = -1;
+			
 		while(true)
 		{
 			try
@@ -42,26 +39,41 @@ public class Timer extends Thread
 				//waits
 				sleep(CHECK_TIME);
 			
-				//reads the file
-				while((line = reader.readLine()) != null)
+				//reads the file's lines
+				lines = Files.readAllLines(file.toPath());
+				
+				index = 0;
+				//check time for every line
+				for(String line : lines)
 				{
 					tmp = line.split(",");
 					millisec = Long.parseLong(tmp[0]);
 					message = tmp[1];
-					chatId = tmp[2];
+					chatId = Long.parseLong(tmp[2]);
+					calendar = Calendar.getInstance();
+					current = calendar.getTimeInMillis();
 					
 					//checks the times: if current time >= timer set, "remove" line and notify
-					if(calendar.getTimeInMillis() >= millisec)
+					if(current >= millisec)
 					{
-						//marks the line "done"
-						...vediProva
-						
+						removeIndex = index;
+						Server.sendAsyncResponse(message, chatId);
+						break;
 					}
+					
+					index++;
 				}
 				
+				if(removeIndex != -1)
+				{
+					lines.remove(removeIndex);
+					Files.write(file.toPath(), lines);
+					removeIndex = -1;
+				}
 			}
 			catch(Exception e)
 			{
+				e.printStackTrace();
 				continue;
 			}
 		}

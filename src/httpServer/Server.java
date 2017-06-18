@@ -1,11 +1,13 @@
 package httpServer;
 
 import java.io.IOException;
+
 import java.util.logging.Logger;
 
-import javax.management.timer.Timer;
 
 import org.json.*;
+
+import functions.Timer;
 import functions.Util;
 import logger.Writer;
 import parser.MessageExecuter;
@@ -143,7 +145,7 @@ public class Server
 	//for timer
 	public static void sendAsyncResponse(String message, long anotherChatId) throws SecurityException, IOException
 	{
-		send(message, chatId);
+		send(message, anotherChatId);
 		
 		return;
 	}

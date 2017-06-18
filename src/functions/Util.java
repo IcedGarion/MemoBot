@@ -10,7 +10,7 @@ import logger.Writer;
 public class Util
 {
 	private static Writer writer = new Writer(Server.TIMES_PATH); 
-	private static Calendar c = Calendar.getInstance();;
+	private static Calendar c;
 	
 	public static String getDoomsday(String year)
 	{
@@ -36,7 +36,7 @@ public class Util
 		return text;
 	}
 	
-	public static long toMillisec(String string)
+	public static long toSec(String string)
 	{
 		String tmp[] = string.split(":");
 		long hour = Long.parseLong(tmp[0]);
@@ -48,6 +48,7 @@ public class Util
 	public static void startTimer(long millisec, String message, long chatId) throws SecurityException, IOException
 	{
 		//writes the time and msg in a file: current time (millisec) + timer
+		c = Calendar.getInstance();
 		millisec = (millisec * 1000) + c.getTimeInMillis();
 		writer.write(millisec + "," + message + "," + chatId);
 		

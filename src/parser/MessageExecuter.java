@@ -48,7 +48,7 @@ public class MessageExecuter
 					if(length >= 3)
 					{
 						if(readMessage[1].matches("^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$"))
-							sec = Util.toMillisec(readMessage[1]);
+							sec = Util.toSec(readMessage[1]);
 						else
 							sec = Integer.parseInt(readMessage[1]);
 
