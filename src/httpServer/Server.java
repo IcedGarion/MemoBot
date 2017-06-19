@@ -9,7 +9,8 @@ import org.json.*;
 
 import functions.Timer;
 import functions.Util;
-import in_out.Writer;
+import in_out.NamesLogger;
+import in_out.OutLogger;
 import parser.MessageExecuter;
 
 public class Server
@@ -24,22 +25,23 @@ public class Server
 	private final static int UPDATE_FREQUENCY = 500;
 	private static long updateId = 0;
 	private static long chatId = 0;
-	private static Logger logger;
-	private static Writer namesLogger;
+	private static OutLogger logger;
+	private static NamesLogger namesLogger;
 	private static Timer timer;
 	
 	public static void main(String args[]) throws Exception
 	{
 		JSONArray result;
 		String[] msgText = new String[2];
-		logger = Logger.getLogger(Server.class.getName());
-		namesLogger = new Writer(NAMES_PATH, "write", null, -1);
+		namesLogger = new NamesLogger(NAMES_PATH);
+		logger = new OutLogger(Server.OUTPUT_PATH);
 		timer = new Timer();
 		timer.start();
 		//cicla sempre sulla prima get per aspettare update
 		//quando arriva un comando chiama MessageExecuter che esegue chiamando la funzione giusta
 		//manda POST getUpdates "offset" : updateId++ per pulire
 		//torna sul primo ciclo
+		
 		
 		logger.info("Bot Running... ");
 		while(true)
@@ -127,8 +129,10 @@ public class Server
 				updateText[1] = firstName = from.getString("first_name");
 				
 				//anyway, logs all the commands read
-				namesLogger.write(firstName + " " + updateText + " " + Util.getDate());
-				logger.info("New Message   : " + updateText + "From : " + firstName + "\n");
+				
+				namesLogger.write(firstName + " " + updateText[0] + " " + Util.getDate());
+				
+				logger.info("New Message   : " + updateText[0] + " From : " + firstName + "\n");
 				
 			}
 		}
@@ -136,7 +140,6 @@ public class Server
 		{
 			//e.printStackTrace();
 			logger.info("EXCEPTION in parseMessage : " + e.getMessage() + "\n");
-			
 		}
 		
 		return updateText;
@@ -171,6 +174,8 @@ public class Server
 					"https://api.telegram.org/bot381629683:AAG35c3Q1TMgxJ74TofHUkpHyyiqI9Swm58/sendMessage",
 					responseJSON
 		    );
+			logger.info("Response sent : " + message + "\n");
+			
 		}
 		catch(Exception e)
 		{
@@ -178,8 +183,6 @@ public class Server
 			logger.warning("EXCEPTION in sendResponse : " + e.getMessage() + "\n");
 			
 		}	
-		
-		logger.info("Response sent : " + message + "\n");
 		
 	}
 	
@@ -195,7 +198,6 @@ public class Server
 					"https://api.telegram.org/bot381629683:AAG35c3Q1TMgxJ74TofHUkpHyyiqI9Swm58/getUpdates",
 					responseJSON
 		    );
-			
 			logger.info("Sync          : OK" + "\n");
 			
 		}
@@ -204,6 +206,18 @@ public class Server
 			//e.printStackTrace();
 			logger.info("EXCEPTION in syncUpdate : " + e.getMessage() + "\n");
 			
+		}
+	}
+	
+	public static void logException(String msg)
+	{
+		try
+		{
+			logger.severe(msg);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
 		}
 	}
 }

@@ -9,7 +9,8 @@ import java.util.logging.Logger;
 import functions.Util;
 import httpServer.Server;
 import in_out.Readr;
-import in_out.Writer;
+import in_out.FileOverWriter;
+import in_out.OutLogger;
 
 public class MessageExecuter
 {
@@ -33,12 +34,9 @@ public class MessageExecuter
 
 	public static void executeMessage(String updateText, String senderName, long chatId) throws SecurityException, IOException
 	{
-		Writer logger;
-		Writer overwriter;
-		Writer writer;
+		FileOverWriter writer = new FileOverWriter(Server.IMPORTANTS_PATH);
 		Readr reader;
 		MessageExecuter.chatId = chatId;
-		logger = new Writer(Server.OUTPUT_PATH, "log", Logger.getLogger(MessageExecuter.class.getName()), -1 );
 		String[] readMessage;
 		long sec = 1;
 		String message = ERROR_MESSAGE;
@@ -134,7 +132,8 @@ public class MessageExecuter
 					{
 						if(length == 3 && readMessage[1].toLowerCase().equals("/rimuovi"))
 						{
-							overwriter = new Writer(Server.IMPORTANTS_PATH, "overwrite", null, Integer.parseInt(readMessage[2]));
+							writer.overwrite(Integer.parseInt(readMessage[2]));
+							/*     */
 							
 							Server.sendResponse("Messaggio numero " + readMessage[2] + " rimosso\n");
 						}
@@ -145,8 +144,7 @@ public class MessageExecuter
 							
 							for(int i=1; i<length; i++)
 								msgTot += readMessage[i] + " ";
-							
-							writer = new Writer(Server.IMPORTANTS_PATH, "write", null, -1);
+					
 							writer.write(msgTot);
 							
 							Server.sendResponse("Messaggio aggiunto");
@@ -169,7 +167,7 @@ public class MessageExecuter
 		catch(Exception e)
 		{
 			Server.sendResponse(ERROR_MESSAGE);
-			logger.warning(e.getMessage() + "\n");
+			Server.logException(e.getMessage());
 		}
 
 		return;

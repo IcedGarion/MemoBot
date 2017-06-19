@@ -5,11 +5,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import httpServer.HttpClientUtil;
 import httpServer.Server;
-import in_out.Writer;
+import in_out.FileOverWriter;
+import in_out.OutLogger;
 
 public class Util
 {
-	private static Writer writer = new Writer(Server.TIMES_PATH, "write", null, -1); 
+	private static FileOverWriter writer;
 	private static Calendar c;
 	
 	public static String getDoomsday(String year)
@@ -50,6 +51,7 @@ public class Util
 		//writes the time and msg in a file: current time (millisec) + timer
 		c = Calendar.getInstance();
 		millisec = (millisec * 1000) + c.getTimeInMillis();
+		writer = new FileOverWriter(Server.TIMES_PATH);
 		writer.write(millisec + "," + message + "," + chatId);
 		
 		return;

@@ -73,7 +73,7 @@ public class Timer extends Thread
 			}
 			catch(Exception e)
 			{
-				e.printStackTrace();
+				Server.logException(e.getMessage());
 				continue;
 			}
 		}
