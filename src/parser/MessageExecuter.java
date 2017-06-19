@@ -1,10 +1,15 @@
 package parser;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 import java.util.logging.Logger;
 
 import functions.Util;
 import httpServer.Server;
+import in_out.Readr;
+import in_out.Writer;
 
 public class MessageExecuter
 {
@@ -14,19 +19,26 @@ public class MessageExecuter
 			+ "'/help' : scrive questo messaggio\n" + "'/doomsday' : Doomsday clock dell'anno corrente\n"
 			+ "'/doomsday <anno> : Doomsday clock dell'anno inserito\n" + "'/random' : Numero random fra 0 e 1\n"
 			+ "'/random <min> <max> : Numero random fra i due estremi\n"
-			+ "'/random <numero> <numero> <numero>... : Numero random fra i dati\n";
+			+ "'/random <numero> <numero> <numero>... : Numero random fra i dati\n"
+			+ "'/importante' : lista messaggi importanti\n"
+			+ "'/importante <messaggio importante>' : aggiunge il messaggio alla lista dei messaggi importanti\n"
+			+ "'/importante /rimuovi <numero messaggio>' : rimuove il messaggio dalla lista";
 
 	private static final String HELLO_MESSAGE = "Ciao! Questo e' un Bot semplice per ricordare appuntamenti.\n"	+ COMMANDS_MESSAGE;
 	private static final String ERROR_MESSAGE = "Comando non riconosicuto.\n" + COMMANDS_MESSAGE;
 	private static final int MAX_RANDOM_SEQUENCE = 20;
+	@SuppressWarnings("unused")
 	private static long chatId;
-	private static final Logger LOGGER = Logger.getLogger( MessageExecuter.class.getName() );
 
 
-	public static void executeMessage(String updateText, long chatId) throws SecurityException, IOException
+	public static void executeMessage(String updateText, String senderName, long chatId) throws SecurityException, IOException
 	{
+		Writer logger;
+		Writer overwriter;
+		Writer writer;
+		Readr reader;
 		MessageExecuter.chatId = chatId;
-
+		logger = new Writer(Server.OUTPUT_PATH, "log", Logger.getLogger(MessageExecuter.class.getName()), -1 );
 		String[] readMessage;
 		long sec = 1;
 		String message = ERROR_MESSAGE;
@@ -100,6 +112,50 @@ public class MessageExecuter
 						Server.sendResponse("Random: " + Util.randomize(readMessage));
 
 					break;
+				case "/importante":
+					if(length == 1)
+					{
+						reader = new Readr(Server.IMPORTANTS_PATH);
+						List<String> lines = reader.readFile();
+						String msg = "";
+						int i = 0;
+						
+						msg += "LISTA IMPORTANTI :\n";
+						for(String line : lines)
+						{
+							msg += (++i) + " ------- \n" + line + "\n";
+						}
+						if(i == 0)
+							msg += "VUOTA!\n";
+						
+						Server.sendResponse(msg);
+					}
+					else if(length >= 2)
+					{
+						if(length == 3 && readMessage[1].toLowerCase().equals("/rimuovi"))
+						{
+							overwriter = new Writer(Server.IMPORTANTS_PATH, "overwrite", null, Integer.parseInt(readMessage[2]));
+							
+							Server.sendResponse("Messaggio numero " + readMessage[2] + " rimosso\n");
+						}
+						else
+						{
+							SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy / kk:mm:ss");
+							String msgTot = dateFormatter.format(new Date()) + " --- " + senderName + " --- ";
+							
+							for(int i=1; i<length; i++)
+								msgTot += readMessage[i] + " ";
+							
+							writer = new Writer(Server.IMPORTANTS_PATH, "write", null, -1);
+							writer.write(msgTot);
+							
+							Server.sendResponse("Messaggio aggiunto");
+						}
+						
+					}
+					else
+						Server.sendResponse(ERROR_MESSAGE);
+					break;
 				case "/help":
 				case "help":
 				case "/help@stanzinomemobot":
@@ -113,7 +169,7 @@ public class MessageExecuter
 		catch(Exception e)
 		{
 			Server.sendResponse(ERROR_MESSAGE);
-			LOGGER.warning(e.getMessage() + "\n");
+			logger.warning(e.getMessage() + "\n");
 		}
 
 		return;

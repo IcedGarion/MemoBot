@@ -5,11 +5,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import httpServer.HttpClientUtil;
 import httpServer.Server;
-import logger.Writer;
+import in_out.Writer;
 
 public class Util
 {
-	private static Writer writer = new Writer(Server.TIMES_PATH); 
+	private static Writer writer = new Writer(Server.TIMES_PATH, "write", null, -1); 
 	private static Calendar c;
 	
 	public static String getDoomsday(String year)

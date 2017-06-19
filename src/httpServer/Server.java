@@ -9,7 +9,7 @@ import org.json.*;
 
 import functions.Timer;
 import functions.Util;
-import logger.Writer;
+import in_out.Writer;
 import parser.MessageExecuter;
 
 public class Server
@@ -19,20 +19,21 @@ public class Server
 	public static String OUTPUT_PATH = "./out/log";
 	private static String NAMES_PATH = "./out/commands";
 	public static String TIMES_PATH = "./out/times";
+	public static String IMPORTANTS_PATH = "./out/importants";
 	private static String responseJSON = "", response = "";
 	private final static int UPDATE_FREQUENCY = 500;
 	private static long updateId = 0;
 	private static long chatId = 0;
-	private static Writer logger;
+	private static Logger logger;
 	private static Writer namesLogger;
 	private static Timer timer;
 	
-	public static void MemoBot() throws Exception
+	public static void main(String args[]) throws Exception
 	{
 		JSONArray result;
-		String msgText;
-		logger = new Writer(Logger.getLogger(Server.class.getName()), OUTPUT_PATH);
-		namesLogger = new Writer(NAMES_PATH);
+		String[] msgText = new String[2];
+		logger = Logger.getLogger(Server.class.getName());
+		namesLogger = new Writer(NAMES_PATH, "write", null, -1);
 		timer = new Timer();
 		timer.start();
 		//cicla sempre sulla prima get per aspettare update
@@ -43,11 +44,18 @@ public class Server
 		logger.info("Bot Running... ");
 		while(true)
 		{
-			result = firstUpdate();
-			msgText = parseMessage(result);
+			try
+			{
+				result = firstUpdate();
+				msgText = parseMessage(result);
 			
-			//parse the last message
-			MessageExecuter.executeMessage(msgText, chatId);
+				//parse the last message
+				MessageExecuter.executeMessage(msgText[0], msgText[1], chatId);
+			}
+			catch(Exception e)
+			{
+				continue;
+			}
 		}
 	}
 	
@@ -87,7 +95,7 @@ public class Server
 			}
 			catch(Exception e)
 			{
-				//e.printStackTrace();
+				e.printStackTrace();
 				logger.warning("NO CONNECTION!\n");
 				conta++;
 			}	
@@ -97,10 +105,12 @@ public class Server
 		return result;
 	}
 
-	public static String parseMessage(JSONArray result) throws SecurityException, IOException
+	public static String[] parseMessage(JSONArray result) throws SecurityException, IOException
 	{
 		JSONObject message1, message2, chat, from;
-		String updateText = "/help", firstName = "";
+		String firstName = "";
+		String[] updateText = new String[2];
+		updateText[0] = "/help";
 		
 		try
 		{
@@ -111,10 +121,10 @@ public class Server
 				updateId = message1.getLong("update_id");
 				message2 = message1.getJSONObject("message");
 				chat = message2.getJSONObject("chat");
-				updateText = message2.getString("text");
+				updateText[0] = message2.getString("text");
 				chatId = chat.getLong("id");
 				from = message2.getJSONObject("from");
-				firstName = from.getString("first_name");
+				updateText[1] = firstName = from.getString("first_name");
 				
 				//anyway, logs all the commands read
 				namesLogger.write(firstName + " " + updateText + " " + Util.getDate());
