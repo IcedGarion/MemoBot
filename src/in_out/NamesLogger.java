@@ -7,9 +7,7 @@ import java.io.PrintWriter;
 
 public class NamesLogger extends Thread
 {
-	private String outPath;
 	private PrintWriter writer;
-	private String msg;
 
 	public NamesLogger(String outPath) throws IOException
 	{

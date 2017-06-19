@@ -1,0 +1,11 @@
+help - '/help' : scrive questo messaggio
+timer - '/timer <x_secondi> <messaggio>' : aspetta per x_secondi e scrive il messaggio
+timer - '/timer <HH:MM> <messaggio>' : aspetta per ore e minuti e scrive il messaggio
+doomsday - '/doomsday <anno>' : Doomsday clock dell'anno inserito
+doomsday - '/doomsday' : Doomsday clock dell'anno corrente
+random - '/random' : Numero random fra 0 e 1
+random - '/random <min> <max>' : Numero random fra i due estremi
+random - '/random <numero> <numero> <numero>...' : Numero random fra i dati
+importante - '/importante <messaggio importante>' : aggiunge il messaggio alla lista dei messaggi importanti
+importante - '/importante' : lista messaggi importanti
+rimuovi - '/rimuovi <numero messaggio>' : rimuove il messaggio dalla lista importanti

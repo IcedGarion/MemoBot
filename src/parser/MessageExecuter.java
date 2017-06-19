@@ -4,13 +4,10 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
-
 import functions.Util;
 import httpServer.Server;
 import in_out.Readr;
 import in_out.FileOverWriter;
-import in_out.OutLogger;
 
 public class MessageExecuter
 {
@@ -23,7 +20,7 @@ public class MessageExecuter
 			+ "'/random <numero> <numero> <numero>... : Numero random fra i dati\n"
 			+ "'/importante' : lista messaggi importanti\n"
 			+ "'/importante <messaggio importante>' : aggiunge il messaggio alla lista dei messaggi importanti\n"
-			+ "'/importante /rimuovi <numero messaggio>' : rimuove il messaggio dalla lista";
+			+ "'/rimuovi <numero messaggio>' : rimuove il messaggio dalla lista importanti";
 
 	private static final String HELLO_MESSAGE = "Ciao! Questo e' un Bot semplice per ricordare appuntamenti.\n"	+ COMMANDS_MESSAGE;
 	private static final String ERROR_MESSAGE = "Comando non riconosicuto.\n" + COMMANDS_MESSAGE;
@@ -130,32 +127,44 @@ public class MessageExecuter
 					}
 					else if(length >= 2)
 					{
-						if(length == 3 && readMessage[1].toLowerCase().equals("/rimuovi"))
-						{
-							try
-							{
-								writer.overwrite(Integer.parseInt(readMessage[2]));
-								Server.sendResponse("Messaggio numero " + readMessage[2] + " rimosso\n");
-							}
-							catch(Exception e)
-							{
-								Server.sendResponse("Non c'e' nella lista");
-							}
-						}
-						else
-						{
-							SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy / kk:mm:ss");
-							String msgTot = dateFormatter.format(new Date()) + " --- " + senderName + " --- " + "\n";
-							
-							for(int i=1; i<length; i++)
-								msgTot += readMessage[i] + " ";
+						SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy / kk:mm:ss");
+						String msgTot = dateFormatter.format(new Date()) + " --- " + senderName + " --- ";
+						
+						for(int i=1; i<length; i++)
+							msgTot += readMessage[i] + " ";
 					
-							writer.write(msgTot + "\n");
+						writer.write(msgTot + "\n");
 							
-							Server.sendResponse("Messaggio aggiunto");
-						}
+						Server.sendResponse("Messaggio aggiunto");
 					}
 					else
+						Server.sendResponse(ERROR_MESSAGE);
+					break;
+				case "/rimuovi":
+					if(length == 2)
+					{
+						try
+						{
+							String all = readMessage[1].toLowerCase(); 
+							
+							if(all.equals("tutti") || all.equals("tutto"))
+							{
+								writer.overwrite(-1);
+								Server.sendResponse("TUTTI I MESSAGGI ELIMINATI");
+							}
+							
+							else
+							{
+								writer.overwrite(Integer.parseInt(readMessage[1]));
+								Server.sendResponse("Messaggio numero " + readMessage[1] + " rimosso\n");
+							}
+						}
+						catch(Exception e)
+						{
+							Server.sendResponse("Non c'e' nella lista");
+						}
+					}
+					else 
 						Server.sendResponse(ERROR_MESSAGE);
 					break;
 				case "/help":

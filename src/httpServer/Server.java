@@ -1,12 +1,7 @@
 package httpServer;
 
 import java.io.IOException;
-
-import java.util.logging.Logger;
-
-
 import org.json.*;
-
 import functions.Timer;
 import functions.Util;
 import in_out.NamesLogger;

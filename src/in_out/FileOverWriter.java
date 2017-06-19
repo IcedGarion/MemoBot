@@ -22,7 +22,16 @@ public class FileOverWriter
 	public String overwrite(int removeIndex) throws IOException
 	{
 		List<String> lines = Files.readAllLines(file.toPath());
-		String removed = lines.remove(removeIndex - 1);
+		String removed = "";
+		
+		if(removeIndex == -1)
+		{
+			for(int i=0; i<lines.size(); i++)
+				lines.remove(i);
+		}
+		else
+			removed = lines.remove(removeIndex - 1);
+		
 		Files.write(file.toPath(), lines);
 		
 		return removed;
