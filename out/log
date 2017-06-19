@@ -1,84 +1,129 @@
-giu 19, 2017 11:01:35 PM in_out.OutLogger info
+giu 19, 2017 11:36:37 PM in_out.OutLogger info
 INFORMAZIONI: Bot Running... 
-giu 19, 2017 11:01:37 PM in_out.OutLogger info
+giu 19, 2017 11:36:38 PM in_out.OutLogger info
 INFORMAZIONI: Bot Can Get Updates...
-giu 19, 2017 11:01:47 PM in_out.OutLogger info
-INFORMAZIONI: New Message   : /doomsdayFrom : Garion
+giu 19, 2017 11:36:42 PM in_out.OutLogger info
+INFORMAZIONI: New Message   : /importante From : Garion
 
-giu 19, 2017 11:01:48 PM in_out.OutLogger info
-INFORMAZIONI: Response sent : IT IS TWO AND A HALF MINUTES TO MIDNIGHT 
+giu 19, 2017 11:36:43 PM in_out.OutLogger info
+INFORMAZIONI: Response sent : LISTA IMPORTANTI :
 
-giu 19, 2017 11:01:48 PM in_out.OutLogger info
+1
+19-06-2017 / 23:35:20 --- Garion --- rimuovi
+
+2
+12
+
+
+giu 19, 2017 11:36:43 PM in_out.OutLogger info
 INFORMAZIONI: Sync          : OK
 
-giu 19, 2017 11:01:49 PM in_out.OutLogger info
+giu 19, 2017 11:36:43 PM in_out.OutLogger info
 INFORMAZIONI: Bot Can Get Updates...
-giu 19, 2017 11:01:52 PM in_out.OutLogger info
-INFORMAZIONI: New Message   : /doomsdayFrom : Garion
+giu 19, 2017 11:36:50 PM in_out.OutLogger info
+INFORMAZIONI: New Message   : /importante /rimuovi 1 From : Garion
 
-giu 19, 2017 11:01:52 PM in_out.OutLogger info
-INFORMAZIONI: Response sent : IT IS TWO AND A HALF MINUTES TO MIDNIGHT 
+giu 19, 2017 11:36:50 PM in_out.OutLogger info
+INFORMAZIONI: Response sent : Messaggio numero 1 rimosso
 
-giu 19, 2017 11:01:52 PM in_out.OutLogger info
+
+giu 19, 2017 11:36:50 PM in_out.OutLogger info
 INFORMAZIONI: Sync          : OK
 
-giu 19, 2017 11:01:53 PM in_out.OutLogger info
+giu 19, 2017 11:36:51 PM in_out.OutLogger info
 INFORMAZIONI: Bot Can Get Updates...
-giu 19, 2017 11:01:55 PM in_out.OutLogger info
-INFORMAZIONI: New Message   : /doomsdayFrom : Garion
+giu 19, 2017 11:36:51 PM in_out.OutLogger info
+INFORMAZIONI: New Message   : /importante From : Garion
 
-giu 19, 2017 11:01:55 PM in_out.OutLogger info
-INFORMAZIONI: Response sent : IT IS TWO AND A HALF MINUTES TO MIDNIGHT 
+giu 19, 2017 11:36:51 PM in_out.OutLogger info
+INFORMAZIONI: Response sent : LISTA IMPORTANTI :
 
-giu 19, 2017 11:01:55 PM in_out.OutLogger info
+1
+12
+
+
+giu 19, 2017 11:36:51 PM in_out.OutLogger info
 INFORMAZIONI: Sync          : OK
 
-giu 19, 2017 11:01:56 PM in_out.OutLogger info
+giu 19, 2017 11:36:52 PM in_out.OutLogger info
 INFORMAZIONI: Bot Can Get Updates...
-giu 19, 2017 11:01:58 PM in_out.OutLogger info
-INFORMAZIONI: New Message   : /doomsdayFrom : Garion
+giu 19, 2017 11:36:59 PM in_out.OutLogger info
+INFORMAZIONI: New Message   : /importante /rimuovi 1 From : Garion
 
-giu 19, 2017 11:01:58 PM in_out.OutLogger info
-INFORMAZIONI: Response sent : IT IS TWO AND A HALF MINUTES TO MIDNIGHT 
+giu 19, 2017 11:36:59 PM in_out.OutLogger info
+INFORMAZIONI: Response sent : Messaggio numero 1 rimosso
 
-giu 19, 2017 11:01:58 PM in_out.OutLogger info
+
+giu 19, 2017 11:36:59 PM in_out.OutLogger info
 INFORMAZIONI: Sync          : OK
 
-giu 19, 2017 11:01:59 PM in_out.OutLogger info
+giu 19, 2017 11:37:00 PM in_out.OutLogger info
 INFORMAZIONI: Bot Can Get Updates...
-giu 19, 2017 11:02:01 PM in_out.OutLogger info
-INFORMAZIONI: New Message   : /doomsdayFrom : Garion
+giu 19, 2017 11:37:01 PM in_out.OutLogger info
+INFORMAZIONI: New Message   : /importante From : Garion
 
-giu 19, 2017 11:02:02 PM in_out.OutLogger info
-INFORMAZIONI: Response sent : IT IS TWO AND A HALF MINUTES TO MIDNIGHT 
+giu 19, 2017 11:37:01 PM in_out.OutLogger info
+INFORMAZIONI: Response sent : LISTA IMPORTANTI :
+VUOTA!
 
-giu 19, 2017 11:02:02 PM in_out.OutLogger info
+
+giu 19, 2017 11:37:01 PM in_out.OutLogger info
 INFORMAZIONI: Sync          : OK
 
-giu 19, 2017 11:02:04 PM in_out.OutLogger info
+giu 19, 2017 11:37:02 PM in_out.OutLogger info
 INFORMAZIONI: Bot Can Get Updates...
-giu 19, 2017 11:02:09 PM in_out.OutLogger info
-INFORMAZIONI: New Message   : /timer 10 culoFrom : Garion
+giu 19, 2017 11:37:08 PM in_out.OutLogger info
+INFORMAZIONI: New Message   : /importante akskdici che usi 12 From : Garion
 
-giu 19, 2017 11:02:09 PM in_out.OutLogger info
-INFORMAZIONI: Response sent : Timer di 10 secondi avviato
-
-giu 19, 2017 11:02:09 PM in_out.OutLogger info
-INFORMAZIONI: Sync          : OK
-
-giu 19, 2017 11:02:10 PM in_out.OutLogger info
-INFORMAZIONI: Bot Can Get Updates...
-giu 19, 2017 11:02:19 PM in_out.OutLogger info
-INFORMAZIONI: Response sent : culo 
-
-giu 19, 2017 11:02:27 PM in_out.OutLogger info
-INFORMAZIONI: New Message   : /importante culoFrom : Garion
-
-giu 19, 2017 11:02:27 PM in_out.OutLogger info
+giu 19, 2017 11:37:08 PM in_out.OutLogger info
 INFORMAZIONI: Response sent : Messaggio aggiunto
 
-giu 19, 2017 11:02:27 PM in_out.OutLogger info
+giu 19, 2017 11:37:09 PM in_out.OutLogger info
 INFORMAZIONI: Sync          : OK
 
-giu 19, 2017 11:02:28 PM in_out.OutLogger info
+giu 19, 2017 11:37:09 PM in_out.OutLogger info
+INFORMAZIONI: Bot Can Get Updates...
+giu 19, 2017 11:37:10 PM in_out.OutLogger info
+INFORMAZIONI: New Message   : /importante From : Garion
+
+giu 19, 2017 11:37:10 PM in_out.OutLogger info
+INFORMAZIONI: Response sent : LISTA IMPORTANTI :
+
+1
+19-06-2017 / 23:37:08 --- Garion --- akskdici che usi 12 
+
+
+giu 19, 2017 11:37:10 PM in_out.OutLogger info
+INFORMAZIONI: Sync          : OK
+
+giu 19, 2017 11:37:11 PM in_out.OutLogger info
+INFORMAZIONI: Bot Can Get Updates...
+giu 19, 2017 11:37:18 PM in_out.OutLogger info
+INFORMAZIONI: New Message   : /importante laici shshuzu From : Garion
+
+giu 19, 2017 11:37:18 PM in_out.OutLogger info
+INFORMAZIONI: Response sent : Messaggio aggiunto
+
+giu 19, 2017 11:37:18 PM in_out.OutLogger info
+INFORMAZIONI: Sync          : OK
+
+giu 19, 2017 11:37:19 PM in_out.OutLogger info
+INFORMAZIONI: Bot Can Get Updates...
+giu 19, 2017 11:37:20 PM in_out.OutLogger info
+INFORMAZIONI: New Message   : /importante From : Garion
+
+giu 19, 2017 11:37:20 PM in_out.OutLogger info
+INFORMAZIONI: Response sent : LISTA IMPORTANTI :
+
+1
+19-06-2017 / 23:37:08 --- Garion --- akskdici che usi 12 
+
+2
+19-06-2017 / 23:37:18 --- Garion --- laici shshuzu 
+
+
+giu 19, 2017 11:37:20 PM in_out.OutLogger info
+INFORMAZIONI: Sync          : OK
+
+giu 19, 2017 11:37:21 PM in_out.OutLogger info
 INFORMAZIONI: Bot Can Get Updates...

@@ -16,14 +16,16 @@ public class FileOverWriter
 	public FileOverWriter(String outPath) throws IOException
 	{
 		file = new File(outPath);
-		writer = new PrintWriter(new BufferedWriter(new FileWriter(outPath)));
+		writer = new PrintWriter(new BufferedWriter(new FileWriter(outPath, true)));
 	}
 	
-	public void overwrite(int removeIndex) throws IOException
+	public String overwrite(int removeIndex) throws IOException
 	{
 		List<String> lines = Files.readAllLines(file.toPath());
-		lines.remove(removeIndex);
+		String removed = lines.remove(removeIndex - 1);
 		Files.write(file.toPath(), lines);
+		
+		return removed;
 	}
 	
 	public void write(String line)
