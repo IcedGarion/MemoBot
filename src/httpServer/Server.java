@@ -1,6 +1,8 @@
 package httpServer;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+
 import org.json.*;
 import functions.Timer;
 import functions.Util;
@@ -163,6 +165,9 @@ public class Server
 		String responseJSON = "";
 		try
 		{
+			//convert message into utf-8
+			Charset.forName("UTF-8").encode(message);
+			
 			responseJSON = "{ \"text\" : \"" + message + "\", \"chat_id\" : " + aChatId+ " }";
 			response = HttpClientUtil.post
 			(

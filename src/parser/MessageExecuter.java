@@ -32,6 +32,7 @@ public class MessageExecuter
 	public static void executeMessage(String updateText, String senderName, long chatId) throws SecurityException, IOException
 	{
 		FileOverWriter writer = new FileOverWriter(Server.IMPORTANTS_PATH);
+		FileOverWriter timesOverwriter = new FileOverWriter(Server.TIMES_PATH);
 		Readr reader;
 		MessageExecuter.chatId = chatId;
 		String[] readMessage;
@@ -57,7 +58,7 @@ public class MessageExecuter
 						if(readMessage[1].matches("^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$"))
 							sec = Util.toSec(readMessage[1]);
 						else
-							sec = Integer.parseInt(readMessage[1]);
+							sec = Long.parseLong(readMessage[1]);
 
 						if(sec <= 0)
 						{
@@ -172,6 +173,9 @@ public class MessageExecuter
 				case "/help@stanzinomemobot":
 					Server.sendResponse(COMMANDS_MESSAGE);
 					break;
+				case "_rimuoviTimer":
+					timesOverwriter.overwrite(-1);
+					Server.sendResponse("TUTTI I TIMER RIMOSSI");
 				default:
 					Server.sendResponse(ERROR_MESSAGE);
 					break;
@@ -180,7 +184,7 @@ public class MessageExecuter
 		catch(Exception e)
 		{
 			Server.sendResponse(ERROR_MESSAGE);
-			Server.logException(e.getMessage());
+			Server.logException(e.getMessage() + "\n" + e.getStackTrace().toString());
 		}
 
 		return;
