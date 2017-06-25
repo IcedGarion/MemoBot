@@ -1,16 +1,15 @@
-package httpServer;
+package it.stanzino.memobot.httpServer;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
-
 import org.json.*;
-import functions.Timer;
-import functions.Util;
-import in_out.NamesLogger;
-import in_out.OutLogger;
-import parser.MessageExecuter;
 
-public class Server
+import it.stanzino.memobot.functions.Timer;
+import it.stanzino.memobot.functions.Util;
+import it.stanzino.memobot.in_out.NamesLogger;
+import it.stanzino.memobot.in_out.OutLogger;
+import it.stanzino.memobot.parser.MessageExecuter;
+
+public class MainServer
 {
 	/* OFFICIAL MEMOBOT */
 	//public static final String TELEGRAM_URL = "https://api.telegram.org/bot381629683:AAG35c3Q1TMgxJ74TofHUkpHyyiqI9Swm58";
@@ -36,7 +35,7 @@ public class Server
 		JSONArray result;
 		String[] msgText = new String[2];
 		namesLogger = new NamesLogger(NAMES_PATH);
-		logger = new OutLogger(Server.OUTPUT_PATH);
+		logger = new OutLogger(MainServer.OUTPUT_PATH);
 		timer = new Timer();
 		timer.start();
 		//cicla sempre sulla prima get per aspettare update

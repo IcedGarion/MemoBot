@@ -1,12 +1,14 @@
-package functions;
+package it.stanzino.memobot.functions;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import httpServer.HttpClientUtil;
-import httpServer.Server;
-import in_out.FileOverWriter;
+
+import it.stanzino.memobot.httpServer.HttpClientUtil;
+import it.stanzino.memobot.httpServer.MainServer;
+import it.stanzino.memobot.in_out.FileOverWriter;
 
 public class Util
 {
@@ -53,7 +55,7 @@ public class Util
 		//writes the time and msg in a file: current time (millisec) + timer
 		c = Calendar.getInstance();
 		millisec = (millisec * 1000) + c.getTimeInMillis();
-		writer = new FileOverWriter(Server.TIMES_PATH);
+		writer = new FileOverWriter(MainServer.TIMES_PATH);
 		writer.write(millisec + "," + message + "," + chatId);
 		
 		return;
@@ -113,13 +115,12 @@ public class Util
 	}
 	
 	public static String convertToUtf(String s)
-	{
-		String ret = "";
-		
+	{		
 		for(int i=0; i<INVALID_UTF8.length; i++)
-			ret = s.replace(INVALID_UTF8[i], VALIDATED_UTF8[i]);
+			s = s.replace(INVALID_UTF8[i], VALIDATED_UTF8[i]);
 		
-		Charset.forName("UTF-8").encode(ret);
+		byte[] bytes = s.getBytes( Charset.forName("UTF-16" ));
+		String ret = new String( bytes, Charset.forName("UTF-16") );
 		
 		return ret;
 	}

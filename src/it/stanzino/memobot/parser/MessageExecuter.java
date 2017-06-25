@@ -1,13 +1,14 @@
-package parser;
+package it.stanzino.memobot.parser;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import functions.Util;
-import httpServer.Server;
-import in_out.Readr;
-import in_out.FileOverWriter;
+
+import it.stanzino.memobot.functions.Util;
+import it.stanzino.memobot.httpServer.MainServer;
+import it.stanzino.memobot.in_out.FileOverWriter;
+import it.stanzino.memobot.in_out.Readr;
 
 public class MessageExecuter
 {
@@ -31,8 +32,8 @@ public class MessageExecuter
 
 	public static void executeMessage(String updateText, String senderName, long chatId) throws SecurityException, IOException
 	{
-		FileOverWriter writer = new FileOverWriter(Server.IMPORTANTS_PATH);
-		FileOverWriter timesOverwriter = new FileOverWriter(Server.TIMES_PATH);
+		FileOverWriter writer = new FileOverWriter(MainServer.IMPORTANTS_PATH);
+		FileOverWriter timesOverwriter = new FileOverWriter(MainServer.TIMES_PATH);
 		Readr reader;
 		MessageExecuter.chatId = chatId;
 		String[] readMessage;
@@ -47,7 +48,7 @@ public class MessageExecuter
 			{
 				case "/start":
 				case "/start@stanzinomemobot":
-					Server.sendResponse(HELLO_MESSAGE);
+					MainServer.sendResponse(HELLO_MESSAGE);
 					break;
 				case "/timer":
 				case "/timer@stanzinomemobot":
@@ -62,7 +63,7 @@ public class MessageExecuter
 
 						if(sec <= 0)
 						{
-							Server.sendResponse(ERROR_MESSAGE);
+							MainServer.sendResponse(ERROR_MESSAGE);
 							break;
 						}
 
@@ -70,28 +71,28 @@ public class MessageExecuter
 						for (int i = 2; i < readMessage.length; i++)
 							message += readMessage[i] + " ";
 						Util.startTimer(sec, message, chatId);
-						Server.sendResponse("Timer di " + sec + " secondi avviato");
+						MainServer.sendResponse("Timer di " + sec + " secondi avviato");
 					}
 					else
-						Server.sendResponse(ERROR_MESSAGE);
+						MainServer.sendResponse(ERROR_MESSAGE);
 					break;
 				case "/doomsday":
 				case "/doomsday@stanzinomemobot":
 					
 					//no parameters : today's doomsday 
 					if(length == 1)
-						Server.sendResponse(Util.getDoomsday(null));
+						MainServer.sendResponse(Util.getDoomsday(null));
 					
 					//year parameter : doomsday of that year
 					else if(length == 2)
 					{
 						if(readMessage[1].matches("^(19|20)\\d{2}$"))
-							Server.sendResponse(Util.getDoomsday(readMessage[1]));
+							MainServer.sendResponse(Util.getDoomsday(readMessage[1]));
 						else
-							Server.sendResponse("Prova con un altro anno...");
+							MainServer.sendResponse("Prova con un altro anno...");
 					}
 					else
-						Server.sendResponse(ERROR_MESSAGE);
+						MainServer.sendResponse(ERROR_MESSAGE);
 
 					break;
 				case "/random":
@@ -99,19 +100,19 @@ public class MessageExecuter
 
 					// length 1 : random 0/1 (a call with null runs this type of random)
 					if(length == 1)
-						Server.sendResponse("Random: " + Util.randomize(null));
+						MainServer.sendResponse("Random: " + Util.randomize(null));
 
 					// length 2 : invalid; length >= x : may cause problems
 					else if(length >= MAX_RANDOM_SEQUENCE || length == 2)
-						Server.sendResponse(ERROR_MESSAGE);
+						MainServer.sendResponse(ERROR_MESSAGE);
 					else
-						Server.sendResponse("Random: " + Util.randomize(readMessage));
+						MainServer.sendResponse("Random: " + Util.randomize(readMessage));
 
 					break;
 				case "/importante":
 					if(length == 1)
 					{
-						reader = new Readr(Server.IMPORTANTS_PATH);
+						reader = new Readr(MainServer.IMPORTANTS_PATH);
 						List<String> lines = reader.readFile();
 						String msg = "";
 						int i = 0;
@@ -124,7 +125,7 @@ public class MessageExecuter
 						if(i == 0)
 							msg += "VUOTA!\n";
 						
-						Server.sendResponse(msg);
+						MainServer.sendResponse(msg);
 					}
 					else if(length >= 2)
 					{
@@ -136,10 +137,10 @@ public class MessageExecuter
 					
 						writer.write(msgTot + "\n");
 							
-						Server.sendResponse("Messaggio aggiunto");
+						MainServer.sendResponse("Messaggio aggiunto");
 					}
 					else
-						Server.sendResponse(ERROR_MESSAGE);
+						MainServer.sendResponse(ERROR_MESSAGE);
 					break;
 				case "/rimuovi":
 					if(length == 2)
@@ -151,47 +152,47 @@ public class MessageExecuter
 							if(all.equals("tutti") || all.equals("tutto"))
 							{
 								writer.overwrite(-1);
-								Server.sendResponse("TUTTI I MESSAGGI ELIMINATI");
+								MainServer.sendResponse("TUTTI I MESSAGGI ELIMINATI");
 							}
 							
 							else
 							{
 								writer.overwrite(Integer.parseInt(readMessage[1]));
-								Server.sendResponse("Messaggio numero " + readMessage[1] + " rimosso\n");
+								MainServer.sendResponse("Messaggio numero " + readMessage[1] + " rimosso\n");
 							}
 						}
 						catch(Exception e)
 						{
-							Server.sendResponse("Non c'e' nella lista");
+							MainServer.sendResponse("Non c'e' nella lista");
 						}
 					}
 					else 
-						Server.sendResponse(ERROR_MESSAGE);
+						MainServer.sendResponse(ERROR_MESSAGE);
 					break;
 				case "/help":
 				case "help":
 				case "/help@stanzinomemobot":
-					Server.sendResponse(COMMANDS_MESSAGE);
+					MainServer.sendResponse(COMMANDS_MESSAGE);
 					break;
 				case "_rimuoviTimer":
 					timesOverwriter.overwrite(-1);
-					Server.sendResponse("TUTTI I TIMER RIMOSSI");
+					MainServer.sendResponse("TUTTI I TIMER RIMOSSI");
 					break;
 				case "/echo":
 					if(length == 2)
-						Server.sendResponse(readMessage[1]);
+						MainServer.sendResponse(readMessage[1]);
 					else
-						Server.sendResponse("Manca il parametro! ");
+						MainServer.sendResponse("Manca il parametro! ");
 					break;
 				default:
-					Server.sendResponse(ERROR_MESSAGE);
+					MainServer.sendResponse(ERROR_MESSAGE);
 					break;
 			}
 		}
 		catch(Exception e)
 		{
-			Server.sendResponse(ERROR_MESSAGE);
-			Server.logException(e + "\n" + e.getMessage() + "\n");
+			MainServer.sendResponse(ERROR_MESSAGE);
+			MainServer.logException(e + "\n" + e.getMessage() + "\n");
 		}
 
 		return;

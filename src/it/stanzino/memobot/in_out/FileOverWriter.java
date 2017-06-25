@@ -1,4 +1,4 @@
-package in_out;
+package it.stanzino.memobot.in_out;
 
 import java.io.BufferedWriter;
 import java.io.File;

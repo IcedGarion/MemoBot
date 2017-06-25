@@ -1,4 +1,4 @@
-package functions;
+package it.stanzino.memobot.functions;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -6,7 +6,7 @@ import java.nio.file.Files;
 import java.util.Calendar;
 import java.util.List;
 
-import httpServer.Server;
+import it.stanzino.memobot.httpServer.MainServer;
 
 /**
  * Reads forever from the file, waiting the time to notify
@@ -19,7 +19,7 @@ public class Timer extends Thread
 	
 	public Timer() throws FileNotFoundException
 	{
-		file = new File(Server.TIMES_PATH);
+		file = new File(MainServer.TIMES_PATH);
 	}
 	
 	@Override
@@ -57,7 +57,7 @@ public class Timer extends Thread
 					if(current >= millisec)
 					{
 						removeIndex = index;
-						Server.sendAsyncResponse(message, chatId);
+						MainServer.sendAsyncResponse(message, chatId);
 						break;
 					}
 					
@@ -73,7 +73,7 @@ public class Timer extends Thread
 			}
 			catch(Exception e)
 			{
-				Server.logException(e.getMessage());
+				MainServer.logException(e.getMessage());
 				continue;
 			}
 		}

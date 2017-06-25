@@ -1,4 +1,4 @@
-package httpServer;
+package it.stanzino.memobot.httpServer;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
