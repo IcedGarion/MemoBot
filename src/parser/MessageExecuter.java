@@ -176,6 +176,13 @@ public class MessageExecuter
 				case "_rimuoviTimer":
 					timesOverwriter.overwrite(-1);
 					Server.sendResponse("TUTTI I TIMER RIMOSSI");
+					break;
+				case "/echo":
+					if(length == 2)
+						Server.sendResponse(readMessage[1]);
+					else
+						Server.sendResponse("Manca il parametro! ");
+					break;
 				default:
 					Server.sendResponse(ERROR_MESSAGE);
 					break;
@@ -184,7 +191,7 @@ public class MessageExecuter
 		catch(Exception e)
 		{
 			Server.sendResponse(ERROR_MESSAGE);
-			Server.logException(e.getMessage() + "\n" + e.getStackTrace().toString());
+			Server.logException(e + "\n" + e.getMessage() + "\n");
 		}
 
 		return;

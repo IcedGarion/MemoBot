@@ -12,6 +12,11 @@ import parser.MessageExecuter;
 
 public class Server
 {
+	/* OFFICIAL MEMOBOT */
+	//public static final String TELEGRAM_URL = "https://api.telegram.org/bot381629683:AAG35c3Q1TMgxJ74TofHUkpHyyiqI9Swm58";
+	
+	/* TEST BOT */
+	public static final String TELEGRAM_URL = "https://api.telegram.org/bot333003680:AAGsxeNerdGwFszlPYJj9xLHTiB4Uc2HsjE";
 	private static final int TIMEOUT = 30000; 				//30 sec di timeout se rimane senza connessione per troppo
 	private static final int MAX_NOCONNECTION = 15;			//max 15 richieste senza connessione e aspetta		
 	public static String OUTPUT_PATH = "./out/log";
@@ -76,11 +81,8 @@ public class Server
 			try
 			{
 				Thread.sleep(UPDATE_FREQUENCY);
-				response = HttpClientUtil.get
-				(
-					"https://api.telegram.org/bot381629683:AAG35c3Q1TMgxJ74TofHUkpHyyiqI9Swm58/getUpdates"			
-				);
-			
+				response = HttpClientUtil.get(TELEGRAM_URL + "/getUpdates");
+				
 				//parse response JSON to get number of messages pendings
 				obj = new JSONObject(response);
 				result = obj.getJSONArray("result");
@@ -163,18 +165,16 @@ public class Server
 	private static void send(String message, long aChatId) throws SecurityException, IOException
 	{
 		String responseJSON = "";
+		String converted = "";
+		
 		try
 		{
 			//convert message into utf-8
-			Charset.forName("UTF-8").encode(message);
+			converted = Util.convertToUtf(message);
 			
-			responseJSON = "{ \"text\" : \"" + message + "\", \"chat_id\" : " + aChatId+ " }";
-			response = HttpClientUtil.post
-			(
-					"https://api.telegram.org/bot381629683:AAG35c3Q1TMgxJ74TofHUkpHyyiqI9Swm58/sendMessage",
-					responseJSON
-		    );
-			logger.info("Response sent : " + message + "\n");
+			responseJSON = "{ \"text\" : \"" + converted + "\", \"chat_id\" : " + aChatId+ " }";
+			response = HttpClientUtil.post(TELEGRAM_URL + "/sendMessage", responseJSON);
+			logger.info("Response sent : " + converted + "\n");
 			
 		}
 		catch(Exception e)
@@ -193,11 +193,7 @@ public class Server
 		{
 			updateId++;
 			responseJSON = "{ \"offset\" : " + updateId + " }";
-			response = HttpClientUtil.post
-			(
-					"https://api.telegram.org/bot381629683:AAG35c3Q1TMgxJ74TofHUkpHyyiqI9Swm58/getUpdates",
-					responseJSON
-		    );
+			response = HttpClientUtil.post(TELEGRAM_URL + "/getUpdates", responseJSON);
 			logger.info("Sync          : OK" + "\n");
 			
 		}
