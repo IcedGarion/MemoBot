@@ -184,6 +184,26 @@ public class MessageExecuter
 					else
 						MainServer.sendResponse("Manca il parametro! ");
 					break;
+				case "/debug":
+					if(length == 2)
+					{
+						String mode = readMessage[1].toLowerCase();
+						if(mode.equals("on"))
+						{
+							MainServer.debugMode = true;
+							MainServer.sendResponse("Debug attivo");
+						}
+						else if(mode.equals("off"))
+						{
+							MainServer.debugMode = true;
+							MainServer.sendResponse("Debug disattivo");
+						}
+						else
+							MainServer.sendResponse("Parametro errato");
+					}
+					else
+						MainServer.sendResponse("Manca il parametro!");
+					break;
 				default:
 					MainServer.sendResponse(ERROR_MESSAGE);
 					break;

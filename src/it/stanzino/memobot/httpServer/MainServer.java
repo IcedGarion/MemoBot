@@ -16,19 +16,21 @@ public class MainServer
 	
 	/* TEST BOT */
 	public static final String TELEGRAM_URL = "https://api.telegram.org/bot333003680:AAGsxeNerdGwFszlPYJj9xLHTiB4Uc2HsjE";
+	private static final long DEV_CHAT_ID = 31149648;
 	private static final int TIMEOUT = 30000; 				//30 sec di timeout se rimane senza connessione per troppo
 	private static final int MAX_NOCONNECTION = 15;			//max 15 richieste senza connessione e aspetta		
+	private final static int UPDATE_FREQUENCY = 500;
 	public static String OUTPUT_PATH = "./out/log";
 	private static String NAMES_PATH = "./out/commands";
 	public static String TIMES_PATH = "./out/times";
 	public static String IMPORTANTS_PATH = "./out/importants";
 	private static String responseJSON = "", response = "";
-	private final static int UPDATE_FREQUENCY = 500;
 	private static long updateId = 0;
 	private static long chatId = 0;
 	private static OutLogger logger;
 	private static NamesLogger namesLogger;
 	private static Timer timer;
+	public static boolean debugMode;
 	
 	public static void main(String args[]) throws Exception
 	{
@@ -38,6 +40,7 @@ public class MainServer
 		logger = new OutLogger(MainServer.OUTPUT_PATH);
 		timer = new Timer();
 		timer.start();
+		debugMode = false;
 		//cicla sempre sulla prima get per aspettare update
 		//quando arriva un comando chiama MessageExecuter che esegue chiamando la funzione giusta
 		//manda POST getUpdates "offset" : updateId++ per pulire
@@ -180,11 +183,11 @@ public class MainServer
 		{
 			//e.printStackTrace();
 			logger.warning("EXCEPTION in sendResponse : " + e.getMessage() + "\n");
-			
+			notifyDev(e + "\n" + e.getMessage());
 		}	
 		
 	}
-	
+
 	//resets the offset to wait for NEW msg
 	private static void syncUpdate() throws SecurityException, IOException
 	{
@@ -209,10 +212,27 @@ public class MainServer
 		try
 		{
 			logger.severe(msg);
+			notifyDev(msg);
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	private static void notifyDev(String e)
+	{
+		if(debugMode)
+		{
+			try
+			{
+				sendAsyncResponse("We have a problem!\n" + e, DEV_CHAT_ID);
+			}
+			catch(Exception ex)
+			{
+				logException(ex + "\n" + ex.getMessage());
+				ex.printStackTrace();
+			}
+		}		
 	}
 }
