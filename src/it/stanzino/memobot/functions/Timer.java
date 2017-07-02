@@ -1,7 +1,11 @@
 package it.stanzino.memobot.functions;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.util.Calendar;
 import java.util.List;
@@ -17,9 +21,10 @@ public class Timer extends Thread
 	private Calendar calendar;
 	private File file;
 	
-	public Timer() throws FileNotFoundException
+	public Timer() throws IOException
 	{
 		file = new File(MainServer.TIMES_PATH);
+		new PrintWriter(new BufferedWriter(new FileWriter(MainServer.TIMES_PATH, true))).close();
 	}
 	
 	@Override
