@@ -1,6 +1,11 @@
 package it.stanzino.memobot.httpServer;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+
 import org.json.*;
 
 import it.stanzino.memobot.functions.Timer;
@@ -23,10 +28,10 @@ public class MainServer
 	public static String OUTPUT_PATH = "./out/log";
 	private static String NAMES_PATH = "./out/commands";
 	public static String TIMES_PATH = "./out/times";
-	public static String IMPORTANTS_PATH = "./out/importants";
+	public static String IMPORTANTS_PATH = "./out/importants/";
 	private static String responseJSON = "", response = "";
 	private static long updateId = 0;
-	private static long chatId = 0;
+	public static long chatId = 0;
 	private static OutLogger logger;
 	private static NamesLogger namesLogger;
 	private static Timer timer;
@@ -40,7 +45,7 @@ public class MainServer
 		logger = new OutLogger(MainServer.OUTPUT_PATH);
 		timer = new Timer();
 		timer.start();
-		debugMode = false;
+		debugMode = true;
 		//cicla sempre sulla prima get per aspettare update
 		//quando arriva un comando chiama MessageExecuter che esegue chiamando la funzione giusta
 		//manda POST getUpdates "offset" : updateId++ per pulire
@@ -172,9 +177,9 @@ public class MainServer
 		try
 		{
 			//convert message into utf-8
-			converted = Util.convertToUtf(message);
+			//converted = Util.convertToUtf(message);
 			
-			responseJSON = "{ \"text\" : \"" + converted + "\", \"chat_id\" : " + aChatId+ " }";
+			responseJSON = "{ \"text\" : \"" + message + "\", \"chat_id\" : " + aChatId+ " }";
 			response = HttpClientUtil.post(TELEGRAM_URL + "/sendMessage", responseJSON);
 			logger.info("Response sent : " + converted + "\n");
 			
@@ -230,7 +235,7 @@ public class MainServer
 			}
 			catch(Exception ex)
 			{
-				logException(ex + "\n" + ex.getMessage());
+				logException(ex.getMessage());
 				ex.printStackTrace();
 			}
 		}		

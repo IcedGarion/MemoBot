@@ -1,6 +1,9 @@
 package it.stanzino.memobot.parser;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -32,7 +35,7 @@ public class MessageExecuter
 
 	public static void executeMessage(String updateText, String senderName, long chatId) throws SecurityException, IOException
 	{
-		FileOverWriter writer = new FileOverWriter(MainServer.IMPORTANTS_PATH);
+		FileOverWriter writer;
 		FileOverWriter timesOverwriter = new FileOverWriter(MainServer.TIMES_PATH);
 		Readr reader;
 		MessageExecuter.chatId = chatId;
@@ -112,12 +115,23 @@ public class MessageExecuter
 				case "/importante":
 					if(length == 1)
 					{
-						reader = new Readr(MainServer.IMPORTANTS_PATH);
-						List<String> lines = reader.readFile();
+						List<String> lines;
+						reader = new Readr(MainServer.IMPORTANTS_PATH + MainServer.chatId);
+						try
+						{
+							lines = reader.readFile();
+						}
+						catch(Exception e)
+						{
+							//crea il file out/importants/<chatId>
+							new PrintWriter(new BufferedWriter(new FileWriter(MainServer.IMPORTANTS_PATH + chatId, true))).close();							
+							MainServer.sendResponse("LISTA IMPORTANTI : \nVUOTA!\n");
+							break;
+						}
 						String msg = "";
 						int i = 0;
 						
-						msg += "LISTA IMPORTANTI :\n";
+						msg += "LISTA IMPORTANTI : ";
 						for(String line : lines)
 						{
 							msg += "\n" + (++i) + "\n" + line + "\n";
@@ -131,7 +145,7 @@ public class MessageExecuter
 					{
 						SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy / kk:mm:ss");
 						String msgTot = dateFormatter.format(new Date()) + " --- " + senderName + " --- ";
-						
+						writer = new FileOverWriter(MainServer.IMPORTANTS_PATH + MainServer.chatId);
 						for(int i=1; i<length; i++)
 							msgTot += readMessage[i] + " ";
 					
@@ -148,7 +162,8 @@ public class MessageExecuter
 						try
 						{
 							String all = readMessage[1].toLowerCase(); 
-							
+							writer = new FileOverWriter(MainServer.IMPORTANTS_PATH + MainServer.chatId);
+
 							if(all.equals("tutti") || all.equals("tutto"))
 							{
 								writer.overwrite(-1);

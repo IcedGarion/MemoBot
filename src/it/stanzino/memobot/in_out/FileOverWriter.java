@@ -42,4 +42,9 @@ public class FileOverWriter
 		writer.write(line);
 		writer.flush();
 	}
+	
+	public void close()
+	{
+		writer.close();
+	}
 }
