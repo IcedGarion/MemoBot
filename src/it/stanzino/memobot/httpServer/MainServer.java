@@ -1,10 +1,6 @@
 package it.stanzino.memobot.httpServer;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import org.json.*;
 
@@ -177,9 +173,9 @@ public class MainServer
 		try
 		{
 			//convert message into utf-8
-			//converted = Util.convertToUtf(message);
+			converted = Util.convertToUtf(message);
 			
-			responseJSON = "{ \"text\" : \"" + message + "\", \"chat_id\" : " + aChatId+ " }";
+			responseJSON = "{ \"text\" : \"" + converted + "\", \"chat_id\" : " + aChatId+ " }";
 			response = HttpClientUtil.post(TELEGRAM_URL + "/sendMessage", responseJSON);
 			logger.info("Response sent : " + converted + "\n");
 			
@@ -225,7 +221,7 @@ public class MainServer
 		}
 	}
 	
-	private static void notifyDev(String e)
+	private static void notifyDev(String e) throws SecurityException, IOException
 	{
 		if(debugMode)
 		{
@@ -235,7 +231,7 @@ public class MainServer
 			}
 			catch(Exception ex)
 			{
-				logException(ex.getMessage());
+				logger.severe(ex.getMessage());
 				ex.printStackTrace();
 			}
 		}		

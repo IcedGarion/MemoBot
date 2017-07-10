@@ -59,10 +59,15 @@ public class MessageExecuter
 					//timer sec msg
 					if(length >= 3)
 					{
-						if(readMessage[1].matches("^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$"))
+						if(readMessage[1].matches("^([0-9][0-9]):([0-9][0-9])$"))
 							sec = Util.toSec(readMessage[1]);
-						else
+						else if(readMessage[1].matches("\\d+"))
 							sec = Long.parseLong(readMessage[1]);
+						else
+						{
+							MainServer.sendResponse("Formato tempo non corretto:\n<hh:ss> - oppure - <secondi>");
+							break;
+						}
 
 						if(sec <= 0)
 						{
@@ -210,7 +215,7 @@ public class MessageExecuter
 						}
 						else if(mode.equals("off"))
 						{
-							MainServer.debugMode = true;
+							MainServer.debugMode = false;
 							MainServer.sendResponse("Debug disattivo");
 						}
 						else

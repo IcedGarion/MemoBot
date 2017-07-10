@@ -55,7 +55,7 @@ public class Util
 		c = Calendar.getInstance();
 		millisec = (millisec * 1000) + c.getTimeInMillis();
 		writer = new FileOverWriter(MainServer.TIMES_PATH);
-		writer.write(millisec + "," + message + "," + chatId);
+		writer.write(millisec + "," + message + "," + chatId + "\n");
 		
 		return;
 	}
