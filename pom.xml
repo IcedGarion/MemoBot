@@ -9,17 +9,26 @@
   
   <build>
     <sourceDirectory>src</sourceDirectory>
-    
     <resources>
-      <resource>
-        <directory>out</directory>
-        <includes>
-          <include>commands</include>
-          <include>importants</include>
-          <include>log</include>
-          <include>times</include>
-        </includes>
-      </resource>
+    
+    	<resource>
+	    	<directory>.</directory>
+            <targetPath>resources</targetPath>
+            <includes>
+                <include>MemoBot.config</include>
+            </includes>
+      	</resource>
+      
+      	<resource>
+        	<directory>out</directory>
+        	<includes>
+          		<include>commands</include>
+          		<include>importants</include>
+          		<include>log</include>
+          		<include>times</include>
+        	</includes>
+      	</resource>
+      	
     </resources>
     
     <plugins>
@@ -60,10 +69,8 @@
       		<source>1.8</source>
       		<target>1.8</target>
     	</configuration>
-  	  </plugin>
-      
-   
-      
+  	  </plugin> 
+
     </plugins>
   </build>
   

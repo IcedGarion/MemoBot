@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import it.stanzino.memobot.configurations.PropertiesManager;
 import it.stanzino.memobot.functions.Util;
 import it.stanzino.memobot.httpServer.MainServer;
 import it.stanzino.memobot.in_out.FileOverWriter;
@@ -36,7 +37,7 @@ public class MessageExecuter
 	public static void executeMessage(String updateText, String senderName, long chatId) throws SecurityException, IOException
 	{
 		FileOverWriter writer;
-		FileOverWriter timesOverwriter = new FileOverWriter(MainServer.TIMES_PATH);
+		FileOverWriter timesOverwriter = new FileOverWriter(PropertiesManager.RESOURCES_TIMES_PATH);
 		Readr reader;
 		MessageExecuter.chatId = chatId;
 		String[] readMessage;
@@ -121,7 +122,7 @@ public class MessageExecuter
 					if(length == 1)
 					{
 						List<String> lines;
-						reader = new Readr(MainServer.IMPORTANTS_PATH + MainServer.chatId);
+						reader = new Readr(PropertiesManager.RESOURCES_IMPORTANTS_PATH + MainServer.chatId);
 						try
 						{
 							lines = reader.readFile();
@@ -129,7 +130,7 @@ public class MessageExecuter
 						catch(Exception e)
 						{
 							//crea il file out/importants/<chatId>
-							new PrintWriter(new BufferedWriter(new FileWriter(MainServer.IMPORTANTS_PATH + chatId, true))).close();							
+							new PrintWriter(new BufferedWriter(new FileWriter(PropertiesManager.RESOURCES_IMPORTANTS_PATH + chatId, true))).close();							
 							MainServer.sendResponse("LISTA IMPORTANTI : \nVUOTA!\n");
 							break;
 						}
@@ -150,7 +151,7 @@ public class MessageExecuter
 					{
 						SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy / kk:mm:ss");
 						String msgTot = dateFormatter.format(new Date()) + " --- " + senderName + " --- ";
-						writer = new FileOverWriter(MainServer.IMPORTANTS_PATH + MainServer.chatId);
+						writer = new FileOverWriter(PropertiesManager.RESOURCES_IMPORTANTS_PATH + MainServer.chatId);
 						for(int i=1; i<length; i++)
 							msgTot += readMessage[i] + " ";
 					
@@ -167,7 +168,7 @@ public class MessageExecuter
 						try
 						{
 							String all = readMessage[1].toLowerCase(); 
-							writer = new FileOverWriter(MainServer.IMPORTANTS_PATH + MainServer.chatId);
+							writer = new FileOverWriter(PropertiesManager.RESOURCES_IMPORTANTS_PATH + MainServer.chatId);
 
 							if(all.equals("tutti") || all.equals("tutto"))
 							{

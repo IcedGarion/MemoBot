@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.json.*;
 
+import it.stanzino.memobot.configurations.PropertiesManager;
 import it.stanzino.memobot.functions.Timer;
 import it.stanzino.memobot.functions.Util;
 import it.stanzino.memobot.in_out.NamesLogger;
@@ -12,20 +13,9 @@ import it.stanzino.memobot.parser.MessageExecuter;
 
 public class MainServer
 {
-	/* OFFICIAL MEMOBOT */
-	//public static final String TELEGRAM_URL = "https://api.telegram.org/bot381629683:AAG35c3Q1TMgxJ74TofHUkpHyyiqI9Swm58";
-	
-	/* TEST BOT */
-	public static final String TELEGRAM_URL = "https://api.telegram.org/bot333003680:AAGsxeNerdGwFszlPYJj9xLHTiB4Uc2HsjE";
-	private static final long DEV_CHAT_ID = 31149648;
-	private static final int TIMEOUT = 30000; 				//30 sec di timeout se rimane senza connessione per troppo
-	private static final int MAX_NOCONNECTION = 15;			//max 15 richieste senza connessione e aspetta		
-	private final static int UPDATE_FREQUENCY = 500;
-	public static String OUTPUT_PATH = "./out/log";
-	private static String NAMES_PATH = "./out/commands";
-	public static String TIMES_PATH = "./out/times";
-	public static String IMPORTANTS_PATH = "./out/importants/";
+	//private static final String BOT_URL = PropertiesManager.TELEGRAM_BOT_URL;
 	private static String responseJSON = "", response = "";
+	private static String BOT_URL;
 	private static long updateId = 0;
 	public static long chatId = 0;
 	private static OutLogger logger;
@@ -35,10 +25,12 @@ public class MainServer
 	
 	public static void main(String args[]) throws Exception
 	{
+		PropertiesManager.loadProperties();
 		JSONArray result;
 		String[] msgText = new String[2];
-		namesLogger = new NamesLogger(NAMES_PATH);
-		logger = new OutLogger(MainServer.OUTPUT_PATH);
+		BOT_URL = PropertiesManager.TELEGRAM_TEST_BOT_URL;
+		namesLogger = new NamesLogger(PropertiesManager.RESOURCES_NAMES_PATH);
+		logger = new OutLogger(PropertiesManager.RESOURCES_OUTPUT_PATH);
 		timer = new Timer();
 		timer.start();
 		debugMode = true;
@@ -76,15 +68,15 @@ public class MainServer
 		
 		do
 		{
-			if(conta >= MAX_NOCONNECTION)
+			if(conta >= PropertiesManager.SERVER_MAX_NOCONNECTION)
 			{
 				conta = 0;
-				Thread.sleep(TIMEOUT);
+				Thread.sleep(PropertiesManager.SERVER_TIMEOUT);
 			}
 			try
 			{
-				Thread.sleep(UPDATE_FREQUENCY);
-				response = HttpClientUtil.get(TELEGRAM_URL + "/getUpdates");
+				Thread.sleep(PropertiesManager.SERVER_UPDATE_FREQUENCY);
+				response = HttpClientUtil.get(BOT_URL + "/getUpdates");
 				
 				//parse response JSON to get number of messages pendings
 				obj = new JSONObject(response);
@@ -176,7 +168,7 @@ public class MainServer
 			converted = Util.convertToUtf(message);
 			
 			responseJSON = "{ \"text\" : \"" + converted + "\", \"chat_id\" : " + aChatId+ " }";
-			response = HttpClientUtil.post(TELEGRAM_URL + "/sendMessage", responseJSON);
+			response = HttpClientUtil.post(BOT_URL + "/sendMessage", responseJSON);
 			logger.info("Response sent : " + converted + "\n");
 			
 		}
@@ -196,7 +188,7 @@ public class MainServer
 		{
 			updateId++;
 			responseJSON = "{ \"offset\" : " + updateId + " }";
-			response = HttpClientUtil.post(TELEGRAM_URL + "/getUpdates", responseJSON);
+			response = HttpClientUtil.post(BOT_URL + "/getUpdates", responseJSON);
 			logger.info("Sync          : OK" + "\n");
 			
 		}
@@ -227,7 +219,7 @@ public class MainServer
 		{
 			try
 			{
-				sendAsyncResponse("We have a problem!\n" + e, DEV_CHAT_ID);
+				sendAsyncResponse("We have a problem!\n" + e, PropertiesManager.TELEGRAM_DEV_CHAT_ID);
 			}
 			catch(Exception ex)
 			{

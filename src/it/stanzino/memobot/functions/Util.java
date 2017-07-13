@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import it.stanzino.memobot.configurations.PropertiesManager;
 import it.stanzino.memobot.httpServer.HttpClientUtil;
 import it.stanzino.memobot.httpServer.MainServer;
 import it.stanzino.memobot.in_out.FileOverWriter;
@@ -54,7 +55,7 @@ public class Util
 		//writes the time and msg in a file: current time (millisec) + timer
 		c = Calendar.getInstance();
 		millisec = (millisec * 1000) + c.getTimeInMillis();
-		writer = new FileOverWriter(MainServer.TIMES_PATH);
+		writer = new FileOverWriter(PropertiesManager.RESOURCES_TIMES_PATH);
 		writer.write(millisec + "," + message + "," + chatId + "\n");
 		
 		return;

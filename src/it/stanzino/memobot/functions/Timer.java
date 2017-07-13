@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.util.Calendar;
 import java.util.List;
 
+import it.stanzino.memobot.configurations.PropertiesManager;
 import it.stanzino.memobot.httpServer.MainServer;
 
 /**
@@ -23,8 +24,8 @@ public class Timer extends Thread
 	
 	public Timer() throws IOException
 	{
-		file = new File(MainServer.TIMES_PATH);
-		new PrintWriter(new BufferedWriter(new FileWriter(MainServer.TIMES_PATH, true))).close();
+		file = new File(PropertiesManager.RESOURCES_TIMES_PATH);
+		new PrintWriter(new BufferedWriter(new FileWriter(PropertiesManager.RESOURCES_TIMES_PATH, true))).close();
 	}
 	
 	@Override
