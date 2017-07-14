@@ -51,9 +51,11 @@ public class MessageExecuter
 			switch(readMessage[0].toLowerCase())
 			{
 				case "/start":
+				case "start":
 				case "/start@stanzinomemobot":
 					MainServer.sendResponse(HELLO_MESSAGE);
 					break;
+				case "timer":
 				case "/timer":
 				case "/timer@stanzinomemobot":
 					
@@ -72,7 +74,7 @@ public class MessageExecuter
 
 						if(sec <= 0)
 						{
-							MainServer.sendResponse(ERROR_MESSAGE);
+							MainServer.sendResponse("Tempo sbagliato");
 							break;
 						}
 
@@ -83,8 +85,9 @@ public class MessageExecuter
 						MainServer.sendResponse("Timer di " + sec + " secondi avviato");
 					}
 					else
-						MainServer.sendResponse(ERROR_MESSAGE);
+						MainServer.sendResponse("Formato tempo non corretto:\n/timer <hh:ss> - oppure - /timer <secondi>");
 					break;
+				case "doomsday":
 				case "/doomsday":
 				case "/doomsday@stanzinomemobot":
 					
@@ -101,23 +104,25 @@ public class MessageExecuter
 							MainServer.sendResponse("Prova con un altro anno...");
 					}
 					else
-						MainServer.sendResponse(ERROR_MESSAGE);
+						MainServer.sendResponse("Comando non corretto:\n/doomsday - oppure - /doomsday <anno>");
 
 					break;
+				case "random":
 				case "/random":
 				case "/random@stanzinomemobot":
 
-					// length 1 : random 0/1 (a call with null runs this type of random)
+					// length 1 : random 0/1 
 					if(length == 1)
 						MainServer.sendResponse("Random: " + Util.randomize(null));
 
-					// length 2 : invalid; length >= x : may cause problems
+					// length 2 
 					else if(length >= MAX_RANDOM_SEQUENCE || length == 2)
-						MainServer.sendResponse(ERROR_MESSAGE);
+						MainServer.sendResponse("Comando non corretto:\n/random - oppure - /random <min> <max> - oppure - /random <n> <n> <n> ...");
 					else
 						MainServer.sendResponse("Random: " + Util.randomize(readMessage));
 
 					break;
+				case "importante":
 				case "/importante":
 					if(length == 1)
 					{
@@ -160,8 +165,9 @@ public class MessageExecuter
 						MainServer.sendResponse("Messaggio aggiunto");
 					}
 					else
-						MainServer.sendResponse(ERROR_MESSAGE);
+						MainServer.sendResponse("Comando non corretto:\n/importante - oppure - /importante <messaggio>");
 					break;
+				case "rimuovi":
 				case "/rimuovi":
 					if(length == 2)
 					{
@@ -188,7 +194,7 @@ public class MessageExecuter
 						}
 					}
 					else 
-						MainServer.sendResponse(ERROR_MESSAGE);
+						MainServer.sendResponse("Comando non corretto:\n/rimuovi <numero> - oppure - /rimuovi tutti");
 					break;
 				case "/help":
 				case "help":
@@ -199,7 +205,7 @@ public class MessageExecuter
 					timesOverwriter.overwrite(-1);
 					MainServer.sendResponse("TUTTI I TIMER RIMOSSI");
 					break;
-				case "/echo":
+				case "_echo":
 					if(length == 2)
 						MainServer.sendResponse(readMessage[1]);
 					else

@@ -5,7 +5,7 @@ import java.util.Properties;
 
 public class PropertiesManager
 {
-	private static final String PROPERTIES_FILE = "MemoBot.config";
+	private static final String PROPERTIES_FILE = "resources/MemoBot.config";
 	public static String TELEGRAM_BOT_URL;
 	public static String TELEGRAM_TEST_BOT_URL;
 	public static long TELEGRAM_DEV_CHAT_ID;
