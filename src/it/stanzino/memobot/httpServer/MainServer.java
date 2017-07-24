@@ -13,6 +13,22 @@ import it.stanzino.memobot.parser.MessageExecuter;
 
 public class MainServer
 {
+	
+	
+	
+	
+	
+	//crea cartella out e file se non ci sono
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	//private static final String BOT_URL = PropertiesManager.TELEGRAM_BOT_URL;
 	private static String responseJSON = "", response = "";
 	private static String BOT_URL;
