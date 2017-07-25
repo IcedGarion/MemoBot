@@ -1,5 +1,6 @@
 package it.stanzino.memobot.httpServer;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.json.*;
@@ -13,25 +14,9 @@ import it.stanzino.memobot.parser.MessageExecuter;
 
 public class MainServer
 {
-	
-	
-	
-	
-	
-	//crea cartella out e file se non ci sono
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	//private static final String BOT_URL = PropertiesManager.TELEGRAM_BOT_URL;
+	private static final String BOT_URL = PropertiesManager.TELEGRAM_BOT_URL;
 	private static String responseJSON = "", response = "";
-	private static String BOT_URL;
+	//private static String BOT_URL;
 	private static long updateId = 0;
 	public static long chatId = 0;
 	private static OutLogger logger;
@@ -41,10 +26,11 @@ public class MainServer
 	
 	public static void main(String args[]) throws Exception
 	{
-		PropertiesManager.loadProperties();
+		init();
+		
 		JSONArray result;
 		String[] msgText = new String[2];
-		BOT_URL = PropertiesManager.TELEGRAM_TEST_BOT_URL;
+		//BOT_URL = PropertiesManager.TELEGRAM_TEST_BOT_URL;
 		namesLogger = new NamesLogger(PropertiesManager.RESOURCES_NAMES_PATH);
 		logger = new OutLogger(PropertiesManager.RESOURCES_OUTPUT_PATH);
 		timer = new Timer();
@@ -61,7 +47,10 @@ public class MainServer
 		{
 			try
 			{
+				//waits for update
 				result = firstUpdate();
+				
+				//when update available, parses command
 				msgText = parseMessage(result);
 			
 				//parse the last message
@@ -119,27 +108,38 @@ public class MainServer
 
 	public static String[] parseMessage(JSONArray result) throws SecurityException, IOException
 	{
-		JSONObject message1, message2, chat, from;
+		JSONObject message1, message2, chat, from, voice, voiceFile;
 		String firstName = "";
 		String[] updateText = new String[2];
 		updateText[0] = "/help";
 		
+		//[{"update_id":508520465,"message":{"date":1501013344,"voice":{"duration":1,"mime_type":"audio/ogg","file_id":"AwADBAADFwIAAhKWuFMXjQbhSByhPAI","file_size":3433},"chat":{"last_name":"Musetta","id":31149648,"type":"private","first_name":"Garion"},"message_id":160,"from":{"language_code":"it-IT","last_name":"Musetta","id":31149648,"first_name":"Garion"}}}]
 		try
 		{
 			//iterates through the messages and gets the last
 			for(int i=0; i<result.length(); i++)
 			{
+				voice = null;
 				message1 = result.getJSONObject(i);
 				updateId = message1.getLong("update_id");
 				message2 = message1.getJSONObject("message");
+				voice = message2.getJSONObject("voice");
 				chat = message2.getJSONObject("chat");
-				updateText[0] = message2.getString("text");
+
+				//check for voice msg or txt
+				if(voice != null)
+				{
+					voiceFile = voice.getJSONObject("file_id");
+					updateText[0] = "/audio " + voiceFile;
+				}
+				else
+					updateText[0] = message2.getString("text");
+				
 				chatId = chat.getLong("id");
 				from = message2.getJSONObject("from");
 				updateText[1] = firstName = from.getString("first_name");
 				
-				//anyway, logs all the commands read
-				
+				//logs all the commands read		
 				namesLogger.write(firstName + " " + updateText[0] + " " + Util.getDate());
 				
 				logger.info("New Message   : " + updateText[0] + " From : " + firstName + "\n");
@@ -155,6 +155,15 @@ public class MainServer
 		return updateText;
 	}
 
+	private static void init()
+	{
+		//carica configurazioni
+		PropertiesManager.loadProperties();
+		
+		//crea le cartelle
+    	new File("out/importants").mkdirs();
+	}
+	
 	//for immediate response
 	public static void sendResponse(String message) throws SecurityException, IOException
 	{

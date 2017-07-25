@@ -28,7 +28,7 @@ public class MessageExecuter
 			+ "'/rimuovi <numero messaggio>' : rimuove il messaggio dalla lista importanti";
 
 	private static final String HELLO_MESSAGE = "Ciao! Questo e' un Bot semplice per ricordare appuntamenti.\n"	+ COMMANDS_MESSAGE;
-	private static final String ERROR_MESSAGE = "Comando non riconosicuto.\n" + COMMANDS_MESSAGE;
+	private static final String ERROR_MESSAGE = "Comando non riconosicuto.\n/help?";
 	private static final int MAX_RANDOM_SEQUENCE = 20;
 	@SuppressWarnings("unused")
 	private static long chatId;
@@ -42,7 +42,7 @@ public class MessageExecuter
 		MessageExecuter.chatId = chatId;
 		String[] readMessage;
 		long sec = 1;
-		String message = ERROR_MESSAGE;
+		String message = ERROR_MESSAGE, voiceFile;
 
 		try
 		{
@@ -54,6 +54,15 @@ public class MessageExecuter
 				case "start":
 				case "/start@stanzinomemobot":
 					MainServer.sendResponse(HELLO_MESSAGE);
+					break;
+				case "/audio":
+					voiceFile = readMessage[1];
+					
+					
+					//PARSE VOICE!
+					
+					
+					
 					break;
 				case "timer":
 				case "/timer":

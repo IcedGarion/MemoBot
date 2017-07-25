@@ -7,7 +7,6 @@ import java.util.Calendar;
 
 import it.stanzino.memobot.configurations.PropertiesManager;
 import it.stanzino.memobot.httpServer.HttpClientUtil;
-import it.stanzino.memobot.httpServer.MainServer;
 import it.stanzino.memobot.in_out.FileOverWriter;
 
 public class Util
