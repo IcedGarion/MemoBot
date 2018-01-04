@@ -25,7 +25,8 @@ public class MessageExecuter
 			+ "'/random <numero> <numero> <numero>... : Numero random fra i dati\n"
 			+ "'/importante' : lista messaggi importanti\n"
 			+ "'/importante <messaggio importante>' : aggiunge il messaggio alla lista dei messaggi importanti\n"
-			+ "'/rimuovi <numero messaggio>' : rimuove il messaggio dalla lista importanti";
+			+ "'/rimuovi <numero messaggio>' : rimuove il messaggio dalla lista importanti\n"
+			+ "'/devtools'\n";
 
 	private static final String HELLO_MESSAGE = "Ciao! Questo e' un Bot semplice per ricordare appuntamenti.\n"	+ COMMANDS_MESSAGE;
 	private static final String ERROR_MESSAGE = "Comando non riconosicuto.\n/help?";
@@ -42,7 +43,7 @@ public class MessageExecuter
 		MessageExecuter.chatId = chatId;
 		String[] readMessage;
 		long sec = 1;
-		String message = ERROR_MESSAGE, voiceFile;
+		String message = ERROR_MESSAGE;
 
 		try
 		{
@@ -54,15 +55,6 @@ public class MessageExecuter
 				case "start":
 				case "/start@stanzinomemobot":
 					MainServer.sendResponse(HELLO_MESSAGE);
-					break;
-				case "/audio":
-					voiceFile = readMessage[1];
-					
-					
-					//PARSE VOICE!
-					
-					
-					
 					break;
 				case "timer":
 				case "/timer":
@@ -133,6 +125,7 @@ public class MessageExecuter
 					break;
 				case "importante":
 				case "/importante":
+				case "/importante@stanzinomemobot":
 					if(length == 1)
 					{
 						List<String> lines;
@@ -178,6 +171,7 @@ public class MessageExecuter
 					break;
 				case "rimuovi":
 				case "/rimuovi":
+				case "/rimuovi@stanzinomemobot":
 					if(length == 2)
 					{
 						try
@@ -221,6 +215,7 @@ public class MessageExecuter
 						MainServer.sendResponse("Manca il parametro! ");
 					break;
 				case "/debug":
+				case "/debug@stanzinomemobot":
 					if(length == 2)
 					{
 						String mode = readMessage[1].toLowerCase();
