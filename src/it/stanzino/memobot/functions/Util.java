@@ -5,6 +5,8 @@ import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import org.json.JSONObject;
+
 import it.stanzino.memobot.configurations.PropertiesManager;
 import it.stanzino.memobot.httpServer.HttpClientUtil;
 import it.stanzino.memobot.in_out.FileOverWriter;
@@ -15,6 +17,16 @@ public class Util
 	private static final String[] VALIDATED_UTF8 = {"a'", "e'", "e'", "i'", "o'", "u'", "A'", "E'", "E'", "I'", "O'", "U'"};
 	private static FileOverWriter writer;
 	private static Calendar c;
+	
+	public static String getIp()
+	{
+		String response = HttpClientUtil.get
+		(
+				"https://api.ipify.org?format=json"	
+		);
+		
+		return new JSONObject(response).getString("ip");
+	}
 	
 	public static String getDoomsday(String year)
 	{

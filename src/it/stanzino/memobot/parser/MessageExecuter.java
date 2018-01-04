@@ -10,6 +10,7 @@ import java.util.List;
 
 import it.stanzino.memobot.configurations.PropertiesManager;
 import it.stanzino.memobot.functions.Util;
+import it.stanzino.memobot.httpServer.HttpClientUtil;
 import it.stanzino.memobot.httpServer.MainServer;
 import it.stanzino.memobot.in_out.FileOverWriter;
 import it.stanzino.memobot.in_out.Readr;
@@ -20,7 +21,9 @@ public class MessageExecuter
 			+ "'/timer <x_secondi> <messaggio>' : aspetta per x_secondi e scrive il messaggio\n"
 			+ "'/timer <HH:MM> <messaggio>' : aspetta per ore e minuti e scrive il messaggio\n"
 			+ "'/help' : scrive questo messaggio\n" + "'/doomsday' : Doomsday clock dell'anno corrente\n"
-			+ "'/doomsday <anno> : Doomsday clock dell'anno inserito\n" + "'/random' : Numero random fra 0 e 1\n"
+			+ "'/doomsday : Doomsday clock dell'anno corrente\n"
+			+ "'/doomsday <anno> : Doomsday clock dell'anno inserito\n"
+			+ "'/random' : Numero random fra 0 e 1\n"
 			+ "'/random <min> <max> : Numero random fra i due estremi\n"
 			+ "'/random <numero> <numero> <numero>... : Numero random fra i dati\n"
 			+ "'/importante' : lista messaggi importanti\n"
@@ -234,6 +237,19 @@ public class MessageExecuter
 					}
 					else
 						MainServer.sendResponse("Manca il parametro!");
+					break;
+				case "/botip":
+				case "/botip@stanzinomemobot":
+					String ip = "ERRORE";
+					
+					try
+					{
+						ip = Util.getIp();
+					}
+					catch(Exception e)
+					{ }
+					
+					MainServer.sendResponse(ip);
 					break;
 				default:
 					MainServer.sendResponse(ERROR_MESSAGE);
