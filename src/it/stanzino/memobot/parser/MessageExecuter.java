@@ -10,7 +10,6 @@ import java.util.List;
 
 import it.stanzino.memobot.configurations.PropertiesManager;
 import it.stanzino.memobot.functions.Util;
-import it.stanzino.memobot.httpServer.HttpClientUtil;
 import it.stanzino.memobot.httpServer.MainServer;
 import it.stanzino.memobot.in_out.FileOverWriter;
 import it.stanzino.memobot.in_out.Readr;
@@ -29,7 +28,7 @@ public class MessageExecuter
 			+ "'/importante' : lista messaggi importanti\n"
 			+ "'/importante <messaggio importante>' : aggiunge il messaggio alla lista dei messaggi importanti\n"
 			+ "'/rimuovi <numero messaggio>' : rimuove il messaggio dalla lista importanti\n"
-			+ "'/devtools'\n";
+			+ "'/botip'\n";
 
 	private static final String HELLO_MESSAGE = "Ciao! Questo e' un Bot semplice per ricordare appuntamenti.\n"	+ COMMANDS_MESSAGE;
 	private static final String ERROR_MESSAGE = "Comando non riconosicuto.\n/help?";
@@ -150,7 +149,8 @@ public class MessageExecuter
 						msg += "LISTA IMPORTANTI : ";
 						for(String line : lines)
 						{
-							msg += "\n" + (++i) + "\n" + line + "\n";
+							if(line != "" || line != " " || line != "\n")
+								msg += "\n" + (++i) + "\n" + line + "\n";
 						}
 						if(i == 0)
 							msg += "VUOTA!\n";
@@ -163,7 +163,7 @@ public class MessageExecuter
 						String msgTot = dateFormatter.format(new Date()) + " --- " + senderName + " --- ";
 						writer = new FileOverWriter(PropertiesManager.RESOURCES_IMPORTANTS_PATH + MainServer.chatId);
 						for(int i=1; i<length; i++)
-							msgTot += readMessage[i] + " ";
+							msgTot += Util.convertToUtf(readMessage[i]) + " ";
 					
 						writer.write(msgTot + "\n");
 							
