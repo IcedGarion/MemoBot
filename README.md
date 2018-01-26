@@ -1,6 +1,18 @@
 telegram chat bot for multiple purposes
 
-HOW TO USE
+
+**FEATURES**
+
+- timer: sends delayed messages
+
+- random: generates numbers based on multiple parameters
+
+- importants: chat's importants events
+
+- doomsday: doomsday clock of the specified year
+
+
+**HOW TO USE**
 
 - edit resources/MemoBot.config and paste your telegram bot url
   in the first property
