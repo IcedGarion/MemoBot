@@ -189,7 +189,7 @@ public class MainServer
 		{
 			//e.printStackTrace();
 			logger.warning("EXCEPTION in sendResponse : " + e.getMessage() + "\n");
-			notifyDev(e + "\n" + e.getMessage() + "\n\nMessage:\n" + message);
+			notifyDev(e + "\n" + e.getMessage());
 		}	
 		
 	}

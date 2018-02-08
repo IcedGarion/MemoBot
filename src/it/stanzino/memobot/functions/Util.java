@@ -13,8 +13,8 @@ import it.stanzino.memobot.in_out.FileOverWriter;
 
 public class Util
 {
-	private static final String[] INVALID_UTF8 = {"à", "è", "é", "ì", "ò", "ù", "À", "È", "É", "Ì", "Ò", "Ù"};
-	private static final String[] VALIDATED_UTF8 = {"a'", "e'", "e'", "i'", "o'", "u'", "A'", "E'", "E'", "I'", "O'", "U'"};
+	private static final String[] INVALID_UTF8 = {"à", "á", "è", "é", "ì", "í", "ò", "ó", "ù", "ú", "À", "È", "É", "Ì", "Ò", "Ù"};
+	private static final String[] VALIDATED_UTF8 = {"a'", "a'", "e'", "e'", "i'", "i'", "o'", "o'", "u'", "u'", "A'", "E'", "E'", "I'", "O'", "U'"};
 	private static FileOverWriter writer;
 	private static Calendar c;
 	
