@@ -182,7 +182,7 @@ public class MainServer
 			
 			responseJSON = "{ \"text\" : \"" + converted + "\", \"chat_id\" : " + aChatId+ " }";
 			response = HttpClientUtil.post(BOT_URL + "/sendMessage", responseJSON);
-			logger.info("Response sent : " + converted + "\n");
+			logger.info("Response sent : " + message + "\n");
 			
 		}
 		catch(Exception e)

@@ -163,7 +163,8 @@ public class MessageExecuter
 						String msgTot = dateFormatter.format(new Date()) + " --- " + senderName + " --- ";
 						writer = new FileOverWriter(PropertiesManager.RESOURCES_IMPORTANTS_PATH + MainServer.chatId);
 						for(int i=1; i<length; i++)
-							msgTot += Util.convertToUtf(readMessage[i]) + " ";
+							//msgTot += Util.convertToUtf(readMessage[i]) + " ";
+							msgTot += readMessage[i] + " ";
 					
 						writer.write(msgTot + "\n");
 							
