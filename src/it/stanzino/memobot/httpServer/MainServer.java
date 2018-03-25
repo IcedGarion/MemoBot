@@ -16,7 +16,6 @@ public class MainServer
 {
 	private static String BOT_URL;
 	private static String responseJSON = "", response = "";
-	//private static String BOT_URL;
 	private static long updateId = 0;
 	public static long chatId = 0;
 	private static OutLogger logger;
@@ -30,7 +29,7 @@ public class MainServer
 		
 		JSONArray result;
 		String[] msgText = new String[2];
-		//BOT_URL = PropertiesManager.TELEGRAM_TEST_BOT_URL;
+		// BOT_URL = PropertiesManager.TELEGRAM_TEST_BOT_URL;
 		BOT_URL = PropertiesManager.TELEGRAM_BOT_URL;
 		namesLogger = new NamesLogger(PropertiesManager.RESOURCES_NAMES_PATH);
 		logger = new OutLogger(PropertiesManager.RESOURCES_OUTPUT_PATH);

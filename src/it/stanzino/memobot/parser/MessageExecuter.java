@@ -13,10 +13,12 @@ import it.stanzino.memobot.functions.Util;
 import it.stanzino.memobot.httpServer.MainServer;
 import it.stanzino.memobot.in_out.FileOverWriter;
 import it.stanzino.memobot.in_out.Readr;
+import it.stanzino.memobot.sqlite.ChatDb;
 
 public class MessageExecuter
 {
 	private static final String COMMANDS_MESSAGE = "Uso:\n"
+			+ "'/iss' : posizione attuale della stazione spaziale internazionale"
 			+ "'/timer <x_secondi> <messaggio>' : aspetta per x_secondi e scrive il messaggio\n"
 			+ "'/timer <HH:MM> <messaggio>' : aspetta per ore e minuti e scrive il messaggio\n"
 			+ "'/help' : scrive questo messaggio\n" + "'/doomsday' : Doomsday clock dell'anno corrente\n"
@@ -57,6 +59,16 @@ public class MessageExecuter
 				case "start":
 				case "/start@stanzinomemobot":
 					MainServer.sendResponse(HELLO_MESSAGE);
+					break;
+				case "/iss":
+					try
+					{
+						MainServer.sendResponse("Posizione della iss:\n" + Util.getIssUrl());
+					}
+					catch(Exception e)
+					{
+						MainServer.sendResponse("Errore nella connessione a https://api.wheretheiss.at/v1/satellites/25544");
+					}
 					break;
 				case "timer":
 				case "/timer":
@@ -203,6 +215,37 @@ public class MessageExecuter
 					else 
 						MainServer.sendResponse("Comando non corretto:\n/rimuovi <numero> - oppure - /rimuovi tutti");
 					break;
+				case "/sql":
+					if(length < 2)
+						MainServer.sendResponse("Inserire una query!");
+					else
+					{
+						ChatDb db = null; 
+					
+						try
+						{
+							db = new ChatDb();
+						}
+						catch(Exception e)
+						{
+							MainServer.sendResponse("ERRORE DB");
+						}
+						
+						try
+						{
+							String query = "";
+							
+							for (int i=1; i<length; i++)
+								query += readMessage[i];
+							
+							MainServer.sendResponse(db.query(query));
+						}
+						catch(Exception e)
+						{
+							MainServer.sendResponse("Errore nela query:\n" + e.getMessage());
+						}
+					}
+						
 				case "/help":
 				case "help":
 				case "/help@stanzinomemobot":
