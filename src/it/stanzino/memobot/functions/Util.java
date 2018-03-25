@@ -25,6 +25,17 @@ public class Util
 		return new JSONObject(response).getString("ip");
 	}
 	
+	public static String getIssUrl()
+	{
+		String response = HttpClientUtil.get("https://api.wheretheiss.at/v1/satellites/25544");
+		JSONObject iss = new JSONObject(response);
+		double langitude = iss.getDouble("latitude");
+		double longitude = iss.getDouble("longitude");
+		String mapsUrl = "https://www.google.com/maps/search/?api=1&query=" + langitude + "," + longitude;
+		
+		return mapsUrl;
+	}
+	
 	public static String getDoomsday(String year)
 	{
 		if(year == null)

@@ -17,6 +17,7 @@ import it.stanzino.memobot.in_out.Readr;
 public class MessageExecuter
 {
 	private static final String COMMANDS_MESSAGE = "Uso:\n"
+			+ "'/iss' : posizione attuale della stazione spaziale internazionale"
 			+ "'/timer <x_secondi> <messaggio>' : aspetta per x_secondi e scrive il messaggio\n"
 			+ "'/timer <HH:MM> <messaggio>' : aspetta per ore e minuti e scrive il messaggio\n"
 			+ "'/help' : scrive questo messaggio\n" + "'/doomsday' : Doomsday clock dell'anno corrente\n"
@@ -57,6 +58,16 @@ public class MessageExecuter
 				case "start":
 				case "/start@stanzinomemobot":
 					MainServer.sendResponse(HELLO_MESSAGE);
+					break;
+				case "/iss":
+					try
+					{
+						MainServer.sendResponse("Posizione della iss:\n" + Util.getIssUrl());
+					}
+					catch(Exception e)
+					{
+						MainServer.sendResponse("Errore nella connessione a https://api.wheretheiss.at/v1/satellites/25544");
+					}
 					break;
 				case "timer":
 				case "/timer":
