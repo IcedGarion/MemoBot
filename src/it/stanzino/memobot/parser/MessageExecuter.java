@@ -18,7 +18,6 @@ import it.stanzino.memobot.sqlite.ChatDb;
 public class MessageExecuter
 {
 	private static final String COMMANDS_MESSAGE = "Uso:\n"
-			+ "'/query' : interroga il database della chat"
 			+ "'/timer <x_secondi> <messaggio>' : aspetta per x_secondi e scrive il messaggio\n"
 			+ "'/timer <HH:MM> <messaggio>' : aspetta per ore e minuti e scrive il messaggio\n"
 			+ "'/help' : scrive questo messaggio\n" + "'/doomsday' : Doomsday clock dell'anno corrente\n"
@@ -30,9 +29,9 @@ public class MessageExecuter
 			+ "'/importante' : lista messaggi importanti\n"
 			+ "'/importante <messaggio importante>' : aggiunge il messaggio alla lista dei messaggi importanti\n"
 			+ "'/rimuovi <numero messaggio>' : rimuove il messaggio dalla lista importanti\n"
-			+ "'/botip'\n";
+			+ "'/query' : interroga il database della chat";
 
-	private static final String HELLO_MESSAGE = "Ciao! Questo e' un Bot semplice per ricordare appuntamenti.\n"	+ COMMANDS_MESSAGE;
+	private static final String HELLO_MESSAGE = "Ciao! Questo e' un Bot semplice per fare molte cose...\n"	+ COMMANDS_MESSAGE;
 	private static final String ERROR_MESSAGE = "Comando non riconosicuto.\n/help?";
 	private static final int MAX_RANDOM_SEQUENCE = 20;
 	@SuppressWarnings("unused")
@@ -216,8 +215,10 @@ public class MessageExecuter
 						MainServer.sendResponse("Comando non corretto:\n/rimuovi <numero> - oppure - /rimuovi tutti");
 					break;
 				case "/query":
-					if(length < 2)
-						MainServer.sendResponse("Inserire una query!");
+					if(length == 1)
+						MainServer.sendResponse("Il database e' composto da una tabella msg(ROWID, date, sender, txt).\n"
+								 + "Evita operazioni che ritornano tabelle grandi, come 'select * from msg'... altrimenti il comando verra' bloccato.\nSolo raggruppamenti o aggregati\n"
+								 + "Prova con 'SELECT COUNT(*) FROM msg'\n'SELECT sender, COUNT(*) FROM msg GROUP BY sender'");
 					else
 					{
 						ChatDb db = null; 
@@ -228,17 +229,23 @@ public class MessageExecuter
 						}
 						catch(Exception e)
 						{
-							MainServer.sendResponse("ERRORE DB");
+							MainServer.sendResponse("Errore connessione al database");
 						}
 						
 						try
 						{
-							String query = "", response;
+							String query = "", response = "";
 							int responseLength;
 							
 							// ricostruisce la query
 							for (int i=1; i<length; i++)
 								query += readMessage[i] + " ";
+							
+							// analizza la query
+							if(! db.validQuery(query))
+							{
+								MainServer.sendResponse("Il risultato della query non sarebbe visualizzabile in un messaggio");
+							}
 							
 							// esegue la query
 							response = db.query(query);

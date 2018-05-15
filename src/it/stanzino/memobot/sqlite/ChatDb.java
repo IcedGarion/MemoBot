@@ -11,11 +11,14 @@ import it.stanzino.memobot.configurations.PropertiesManager;
 
 public class ChatDb
 {
+	// connette al db
     private Connection connect()
     {
         Connection conn = null;
+        
         // db parameters
         String url = "jdbc:sqlite:" + PropertiesManager.DATABASE_PATH;
+        
         // create a connection to the database
         try
         {
@@ -29,6 +32,8 @@ public class ChatDb
         return conn;
     }
     
+    // msg(ROWID, date, sender, txt)
+    // connette al db + esegue la query generica
     public String query(String sql) throws SQLException
     {
     	String ret = "";
@@ -37,10 +42,10 @@ public class ChatDb
         Statement stmt  = conn.createStatement();
         ResultSet rs    = stmt.executeQuery(sql);
                 	
+        // per trovare numero colonne di query generica
         ResultSetMetaData metadata = rs.getMetaData();
         int columnCount = metadata.getColumnCount();    
             
-        // msg(date, sender, txt)
         // loop through the result set
         while (rs.next()) 
         {
@@ -51,4 +56,18 @@ public class ChatDb
         
         return ret;
     }
+
+    // valida la query: il risultato dovra' essere una tabella piccola in memoria,
+    // altrimenti il sistema crasha. CHECK GROUP BY / OPERATORI AGGREGATI
+	public boolean validQuery(String query)
+	{
+		boolean valid = false;
+		
+		query = query.toLowerCase();
+		if(query.contains("group by") || query.contains("count") || query.contains("avg") || query.contains("sum")
+				|| query.contains("min") || query.contains("max") || query.contains("top"))
+			valid = true;
+		
+		return valid;
+	}
 }
