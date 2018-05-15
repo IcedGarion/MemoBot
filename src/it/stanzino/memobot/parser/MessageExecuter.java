@@ -216,9 +216,10 @@ public class MessageExecuter
 					break;
 				case "/query":
 					if(length == 1)
-						MainServer.sendResponse("Il database e' composto da una tabella msg(ROWID, date, sender, txt).\n"
-								 + "Evita operazioni che ritornano tabelle grandi, come 'select * from msg'... altrimenti il comando verra' bloccato.\nSolo raggruppamenti o aggregati\n"
-								 + "Prova con 'SELECT COUNT(*) FROM msg'\n'SELECT sender, COUNT(*) FROM msg GROUP BY sender'");
+						MainServer.sendResponse("Il database e' composto da una tabella\nmsg(ROWID, date, sender, txt).\n"
+								 + "\nSOLO SELECT. Evita selezioni che ritornano tabelle grandi, come\n'SELECT * FROM msg'... altrimenti il comando verra' bloccato.\nSolo raggruppamenti o aggregati\n"
+								 + "\nProva con:\n/query SELECT COUNT(*) FROM msg\n/query SELECT sender, COUNT(*) FROM msg GROUP BY sender\n\n"
+								 + "Se non sai cosa scrivere, https://www.w3schools.com/sql/sql_syntax.asp", true);
 					else
 					{
 						ChatDb db = null; 

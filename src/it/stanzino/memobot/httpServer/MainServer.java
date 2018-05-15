@@ -154,7 +154,17 @@ public class MainServer
 	//for immediate response
 	public static void sendResponse(String message) throws SecurityException, IOException
 	{
-		send(message, chatId);
+		send(message, chatId, false);
+		
+		syncUpdate();
+		
+		return;
+	}
+	
+	//for immediate MARKDOWN response
+	public static void sendResponse(String message, boolean noPreview) throws SecurityException, IOException
+	{
+		send(message, chatId, noPreview);
 		
 		syncUpdate();
 		
@@ -164,22 +174,30 @@ public class MainServer
 	//for timer
 	public static void sendAsyncResponse(String message, long anotherChatId) throws SecurityException, IOException
 	{
-		send(message, anotherChatId);
+		send(message, anotherChatId, false);
 		
 		return;
 	}
 	
-	private static void send(String message, long aChatId) throws SecurityException, IOException
+	private static void send(String message, long aChatId, boolean noPreview) throws SecurityException, IOException
 	{
 		String responseJSON = "";
 		String converted = "";
+		String parseMode = "";
+		String preview = "";
+		
+		// markdown and disable links preview
+		//if(markdown)
+		//	parseMode = "\"parse_mode\" : \"Markdown\", ";
+		if(noPreview)
+			preview = "\"disable_web_page_preview\" : \"true\", ";
 		
 		try
 		{
 			//convert message into utf-8
 			converted = Util.convertToUtf(message);
 			
-			responseJSON = "{ \"text\" : \"" + converted + "\", \"chat_id\" : " + aChatId+ " }";
+			responseJSON = "{ " + parseMode + preview + "\"text\" : \"" + converted + "\", \"chat_id\" : " + aChatId+ " }";
 			response = HttpClientUtil.post(BOT_URL + "/sendMessage", responseJSON);
 			logger.info("Response sent : " + message + "\n");
 			
