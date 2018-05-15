@@ -29,30 +29,24 @@ public class ChatDb
         return conn;
     }
     
-    public String query(String sql)
+    public String query(String sql) throws SQLException
     {
     	String ret = "";
     	
-        try (Connection conn = connect();
-             Statement stmt  = conn.createStatement();
-             ResultSet rs    = stmt.executeQuery(sql))
-        {
-        	
-        	ResultSetMetaData metadata = rs.getMetaData();
-            int columnCount = metadata.getColumnCount();    
+        Connection conn = connect();
+        Statement stmt  = conn.createStatement();
+        ResultSet rs    = stmt.executeQuery(sql);
+                	
+        ResultSetMetaData metadata = rs.getMetaData();
+        int columnCount = metadata.getColumnCount();    
             
-        	// msg(date, sender, txt)
-            // loop through the result set
-            while (rs.next()) 
-            {
-            	for (int i = 1; i <= columnCount; i++)
-                    ret += rs.getString(i) + " - ";
-            	ret += "\n";
-            }
-        }
-        catch (SQLException e)
+        // msg(date, sender, txt)
+        // loop through the result set
+        while (rs.next()) 
         {
-            System.out.println("aaa" + e.getMessage());
+        	for (int i = 1; i <= columnCount; i++)
+                ret += rs.getString(i) + " - ";
+        	ret = ret.substring(0, ret.length()-3) + "\n";
         }
         
         return ret;

@@ -17,6 +17,7 @@ public class PropertiesManager
 	public static String RESOURCES_TIMES_PATH;
 	public static String RESOURCES_IMPORTANTS_PATH;
 	public static String DATABASE_PATH;
+	public static int MAX_MSG;
 
 	public static void loadProperties()
 	{
@@ -45,5 +46,6 @@ public class PropertiesManager
 		RESOURCES_TIMES_PATH = prop.getProperty("RESOURCES_TIMES_PATH");
 		RESOURCES_IMPORTANTS_PATH = prop.getProperty("RESOURCES_IMPORTANTS_PATH");
 		DATABASE_PATH = prop.getProperty("DATABASE_PATH");
+		MAX_MSG = Integer.parseInt(prop.getProperty("SERVER_TIMEOUT"));
 	}
 }

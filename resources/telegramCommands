@@ -9,4 +9,4 @@ random - '/random <numero> <numero> <numero>...' : Numero random fra i dati
 importante - '/importante <messaggio importante>' : aggiunge il messaggio alla lista dei messaggi importanti
 importante - '/importante' : lista messaggi importanti
 rimuovi - '/rimuovi <numero messaggio>' : rimuove il messaggio dalla lista importanti
-devtools - strumenti di sviluppo
+query - '/query <sql query>' : interroga il database della chat

@@ -18,7 +18,7 @@ import it.stanzino.memobot.sqlite.ChatDb;
 public class MessageExecuter
 {
 	private static final String COMMANDS_MESSAGE = "Uso:\n"
-			+ "'/iss' : posizione attuale della stazione spaziale internazionale"
+			+ "'/query' : interroga il database della chat"
 			+ "'/timer <x_secondi> <messaggio>' : aspetta per x_secondi e scrive il messaggio\n"
 			+ "'/timer <HH:MM> <messaggio>' : aspetta per ore e minuti e scrive il messaggio\n"
 			+ "'/help' : scrive questo messaggio\n" + "'/doomsday' : Doomsday clock dell'anno corrente\n"
@@ -215,7 +215,7 @@ public class MessageExecuter
 					else 
 						MainServer.sendResponse("Comando non corretto:\n/rimuovi <numero> - oppure - /rimuovi tutti");
 					break;
-				case "/sql":
+				case "/query":
 					if(length < 2)
 						MainServer.sendResponse("Inserire una query!");
 					else
@@ -233,19 +233,31 @@ public class MessageExecuter
 						
 						try
 						{
-							String query = "";
+							String query = "", response;
+							int responseLength;
 							
+							// ricostruisce la query
 							for (int i=1; i<length; i++)
-								query += readMessage[i];
+								query += readMessage[i] + " ";
 							
-							MainServer.sendResponse(db.query(query));
+							// esegue la query
+							response = db.query(query);
+							responseLength = response.length();
+							
+							// taglia in testa la risposta se troppo lunga
+							if(responseLength >= PropertiesManager.MAX_MSG)
+							{
+								response = response.substring(responseLength - PropertiesManager.MAX_MSG, responseLength);
+							}
+							
+							MainServer.sendResponse(response);
 						}
 						catch(Exception e)
 						{
-							MainServer.sendResponse("Errore nela query:\n" + e.getMessage());
+							MainServer.sendResponse("Errore nella query:\n" + e.getMessage());
 						}
 					}
-						
+					break;
 				case "/help":
 				case "help":
 				case "/help@stanzinomemobot":
