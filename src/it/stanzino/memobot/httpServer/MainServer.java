@@ -97,7 +97,7 @@ public class MainServer
 			catch(Exception e)
 			{
 				e.printStackTrace();
-				logger.warning("NO CONNECTION!\n");
+				logger.warning("NO CONNECTION or WRONG URL\n");
 				conta++;
 			}	
 		}

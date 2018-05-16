@@ -68,6 +68,6 @@ public class ChatDb
 				|| query.contains("min") || query.contains("max") || query.contains("top"))
 			valid = true;
 		
-		return valid;
+		return true;
 	}
 }

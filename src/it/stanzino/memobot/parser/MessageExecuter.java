@@ -7,6 +7,11 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import it.stanzino.memobot.configurations.PropertiesManager;
 import it.stanzino.memobot.functions.Util;
@@ -222,48 +227,71 @@ public class MessageExecuter
 								 + "Se non sai cosa scrivere, https://www.w3schools.com/sql/sql_syntax.asp", true);
 					else
 					{
-						ChatDb db = null; 
-					
-						try
-						{
-							db = new ChatDb();
-						}
-						catch(Exception e)
-						{
-							MainServer.sendResponse("Errore connessione al database");
-						}
+					    int timeout = PropertiesManager.RESPONSE_TIMEOUT;
+						
+						ExecutorService executor = Executors.newSingleThreadExecutor();
 						
 						try
 						{
-							String query = "", response = "";
-							int responseLength;
-							
-							// ricostruisce la query
-							for (int i=1; i<length; i++)
-								query += readMessage[i] + " ";
-							
-							// analizza la query
-							if(! db.validQuery(query))
-							{
-								MainServer.sendResponse("Il risultato della query non sarebbe visualizzabile in un messaggio");
-							}
-							
-							// esegue la query
-							response = db.query(query);
-							responseLength = response.length();
-							
-							// taglia in testa la risposta se troppo lunga
-							if(responseLength >= PropertiesManager.MAX_MSG)
-							{
-								response = response.substring(responseLength - PropertiesManager.MAX_MSG, responseLength);
-							}
-							
-							MainServer.sendResponse(response);
-						}
-						catch(Exception e)
+							// nuovo thread con timeout, che esegue la query
+				            Future<Object> f = executor.submit(() ->
+				            {
+				            	String query = "", response = "";
+								ChatDb db = null; 
+
+				            	try
+								{
+									db = new ChatDb();
+								}
+								catch(Exception e)
+								{
+									return "Errore connessione al database";
+								}
+				            	
+				            	try
+								{
+									int responseLength;
+									
+									// ricostruisce la query
+									for (int i=1; i<length; i++)
+										query += readMessage[i] + " ";
+									
+									// analizza la query
+									if(! db.validQuery(query))
+									{
+										return("Il risultato della query non sarebbe visualizzabile in un messaggio");
+									}
+									
+									// esegue la query
+									response = db.query(query);
+									responseLength = response.length();
+									
+									// taglia in testa la risposta se troppo lunga
+									if(responseLength >= PropertiesManager.MAX_MSG)
+									{
+										response = response.substring(responseLength - PropertiesManager.MAX_MSG, responseLength);
+									}
+									
+									return response;
+								}
+								catch(Exception e)
+								{
+									return "Errore nella query:\n" + e.getMessage();
+								}
+				            });
+
+				            // qua scatta il timeout: se ce l'ha fatta prima, invia la risposta, altrimenti TimeoutException
+				            MainServer.sendResponse((String) f.get(timeout, TimeUnit.SECONDS));
+				        }
+						catch (TimeoutException e)
 						{
-							MainServer.sendResponse("Errore nella query:\n" + e.getMessage());
-						}
+							MainServer.sendResponse("Timout connessione al database");
+				        }
+						finally
+						{
+							// killa il thread query
+				            executor.shutdown();
+				        }		
 					}
 					break;
 				case "/help":
