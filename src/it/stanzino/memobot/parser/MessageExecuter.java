@@ -220,6 +220,7 @@ public class MessageExecuter
 						MainServer.sendResponse("Comando non corretto:\n/rimuovi <numero> - oppure - /rimuovi tutti");
 					break;
 				case "/query":
+				case "/query@stanzinomemobot":
 					if(length == 1)
 						MainServer.sendResponse("Il database e' composto da una tabella\nmsg(ROWID, date, sender, txt).\n"
 								 + "\nSOLO SELECT. Evita selezioni che ritornano tabelle grandi, come\n'SELECT * FROM msg'... altrimenti il comando verra' bloccato.\nSolo raggruppamenti o aggregati\n"
@@ -271,7 +272,9 @@ public class MessageExecuter
 									{
 										response = response.substring(responseLength - PropertiesManager.MAX_MSG, responseLength);
 									}
-									
+									 if(responseLength == 0)
+										 return "Empty";
+									 
 									return response;
 								}
 								catch(Exception e)
